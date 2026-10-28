@@ -10,7 +10,7 @@ const { join, extname } = require('path');
 const root = join(__dirname, '..');
 const out = process.argv[2] || join(root, '..', 'shots');
 mkdirSync(out, { recursive: true });
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.mp4': 'video/mp4', '.webm': 'video/webm' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.avif': 'image/avif', '.mp4': 'video/mp4', '.webm': 'video/webm' };
 (async () => {
   const server = createServer((req, res) => {
     let file = join(root, decodeURIComponent(req.url.split('?')[0]));
@@ -21,7 +21,7 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
   const port = server.address().port;
   const launch = existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {};
   const browser = await chromium.launch(launch);
-  const pages = ['index.html', 'menu.html', 'branches.html', 'franchise.html', '404.html'];
+  const pages = ['index.html', 'menu.html', 'branches.html', 'franchise.html', '404.html', 'sufra.html'];
   const sizes = { phone: { width: 375, height: 740 }, desktop: { width: 1280, height: 800 } };
   const problems = [];
   for (const l of ['en', 'ar']) {
@@ -44,7 +44,26 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
         if (over.sw > over.w + 1) problems.push(`${l} ${sz} ${p}: page scrolls sideways (${over.sw} > ${over.w}) ${over.bad.join(' | ')}`);
         if (/undefined|NaN|\[object/.test(over.text)) problems.push(`${l} ${sz} ${p}: undefined/NaN in text`);
         errors.forEach((e) => problems.push(`${l} ${sz} ${p}: ${e}`));
-        if (p === 'index.html') await page.screenshot({ path: join(out, `hero-${l}-${sz}.png`) });
+        if (p === 'index.html' || p === 'sufra.html') await page.screenshot({ path: join(out, `${p === 'sufra.html' ? 'sufra-hero' : 'hero'}-${l}-${sz}.png`) });
+        if (p === 'sufra.html') {
+          // Prototype B: pick a category on the rail, add two dishes, open the basket and the hand-over screen.
+          await page.evaluate(() => { document.querySelectorAll('.tab')[3].click(); });
+          await page.waitForTimeout(400);
+          await page.evaluate(() => { document.querySelectorAll('[data-add]')[0].click(); document.querySelectorAll('[data-add]')[1].click(); document.querySelectorAll('[data-more]')[0].click(); });
+          await page.waitForTimeout(700);
+          await page.evaluate(() => document.querySelector('#menu').scrollIntoView());
+          await page.waitForTimeout(400);
+          await page.screenshot({ path: join(out, `sufra-menu-${l}-${sz}.png`) });
+          await page.evaluate(() => document.querySelector(innerWidth < 900 ? '#bar-basket' : '#basket-btn').click()); await page.waitForTimeout(600);
+          await page.screenshot({ path: join(out, `sufra-basket-${l}-${sz}.png`) });
+          await page.click('#bk-go'); await page.waitForTimeout(400);
+          await page.screenshot({ path: join(out, `sufra-handover-${l}-${sz}.png`) });
+          await page.keyboard.press('Escape'); await page.waitForTimeout(500);
+          await page.evaluate(() => { try { localStorage.removeItem('mankal-basket'); } catch (e) {} });
+          await page.evaluate(() => scrollTo(0, 0));
+          const tabs = await page.evaluate(() => document.querySelectorAll('.tab').length);
+          if (tabs < 5) problems.push(`${l} ${sz} sufra.html: only ${tabs} menu tabs`);
+        }
         if (p === 'menu.html') {
           // The basket: add two dishes, open the drawer, then the hand-over screen; and the branch sheet on the home page.
           await page.evaluate(() => { document.querySelectorAll('[data-add]')[0].click(); document.querySelectorAll('[data-add]')[2].click(); document.querySelectorAll('[data-more]')[0].click(); });

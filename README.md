@@ -15,6 +15,17 @@ Showcase site for Al Mankal Chicken Tikka (Gardens and Sweifieh, Amman; owner Sa
 
 Preview: https://al-mankal-amman.pages.dev (Cloudflare Pages from `main`).
 
+## Prototype B "Sufra" (29 October 2026, for review)
+
+`sufra.html` is a separate page, not a replacement: `index.html` and the other pages are unchanged. It tests the recommended direction from the market research: a daylight, menu-first homepage that keeps the burn-in entry and one short grill band.
+
+- Own files only: `assets/css/sufra.css`, `assets/js/sufra.js`, images in `assets/img/s/` (AVIF and WebP at 480 and 960 px, made from `assets/img/ig/`; the logo as WebP). It shares the basket, branch and language keys with the other pages.
+- Hero: Delivery or Pickup and Gardens or Sweifieh (saved as `mankal-mode` and `mankal-branch`), then the menu. MakanE still asks for these again; the handover screen says which to pick.
+- Menu: a sticky category rail (WAI-ARIA tabs, arrow keys work) over photo-first cards with price and a full-width Add. Promo posters are not used as dish photos; a dish without a photo shows a logo tile. Store descriptions are tidied for spacing only.
+- "Order again" shows the last basket sent to checkout from this phone (`mankal-last`, device only).
+- Branch cards have an hours line that turns into "Open now / Closed now" once `HOURS` in `sufra.js` is filled. It says "to confirm" until Saif confirms the hours.
+- Type: Barlow Condensed 800 (Latin display), Lalezar (Arabic display), Rubik (Latin text), IBM Plex Sans Arabic (Arabic text), all SIL OFL and self-hosted.
+
 ## Quality pass
 
 `NODE_PATH=$(npm root -g) node tools/shoot.cjs ../shots` serves the site locally, blocks outside requests, captures every page at 375 px and 1280 px in English and Arabic, and reports console errors, sideways scroll and stray "undefined" text. It must print `no problems`.
