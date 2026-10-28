@@ -11,9 +11,11 @@
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/alfa-slab-one-latin-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/lalezar-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/fonts.css?v=2">
-  <link rel="stylesheet" href="assets/css/site.css?v=2">
-  <script src="assets/js/lang.js?v=2"></script>
+  <link rel="preload" href="assets/fonts/rubik-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/fraunces-latin-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css?v=3">
+  <link rel="stylesheet" href="assets/css/site.css?v=3">
+  <script src="assets/js/lang.js?v=3"></script>
   <meta property="og:title" content="Al Mankal Chicken Tikka | On the coals since 1985">
   <meta property="og:description" content="Chicken tikka grilled over real coals in Amman since 1985. Order from Gardens or Sweifieh.">
   <meta property="og:type" content="website">
@@ -40,7 +42,7 @@
   <!-- The entry: the logo burns in from the bottom up, then the curtain lifts onto the grill. Once per tab. -->
   <div class="intro" id="intro" aria-hidden="true">
     <div class="intro-stage">
-      <div class="intro-logo"><img src="assets/img/logo.png" alt="" width="900" height="800" decoding="async"><img class="heat" src="assets/img/logo.png" alt="" width="900" height="800" decoding="async"></div>
+      <div class="intro-logo"><img src="assets/img/logo.png" alt="" width="900" height="800" decoding="sync" fetchpriority="high"><span class="cover"><i class="heat"></i></span></div>
       <p class="intro-line" data-t="intro_line">On the coals since 1985</p>
     </div>
     <i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i>
@@ -85,7 +87,7 @@
           </div>
           <p class="ticket rise"><span data-t="tag_1">Healthy</span><i></i><span data-t="tag_2">Charcoal</span><i></i><span data-t="tag_3">Since 1985</span></p>
         </div>
-        <div class="hero-hint rise" aria-hidden="true"><span data-t="hero_hint">Scroll</span></div>
+        <div class="hero-hint rise" aria-hidden="true"><span data-t="hero_hint">Scroll</span><i class="drip"></i></div>
       </section>
     </div>
 
@@ -112,19 +114,19 @@
       </div>
       <div class="film">
         <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/coals-2.jpg" alt="" decoding="async"></div>
+          <div class="frame-media"><img src="assets/img/ig/coals-2.jpg" alt="" loading="lazy" decoding="async"></div>
           <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_1_w">Coals</p><h3 class="display" data-t="film_1_t">Charcoal, not gas</h3><p class="copy" data-t="film_1_p">Every piece of chicken at Al Mankal goes over live charcoal. The smoke is the seasoning, and it has been since 1985.</p></div>
         </article>
         <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/grill-rows.jpg" alt="" decoding="async"></div>
+          <div class="frame-media"><img src="assets/img/ig/grill-rows.jpg" alt="" loading="lazy" decoding="async"></div>
           <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_2_w">Chicken</p><h3 class="display" data-t="film_2_t">Split flat, grilled until it chars</h3><p class="copy" data-t="film_2_p">Whole chickens cut and pressed on the grate, sold by the piece: a quarter, a half, or a tray for the family.</p></div>
         </article>
         <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/puri.jpg" alt="" decoding="async"></div>
+          <div class="frame-media"><img src="assets/img/ig/puri.jpg" alt="" loading="lazy" decoding="async"></div>
           <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_3_w">Puri</p><h3 class="display" data-t="film_3_t">Bread that puffs in hot oil</h3><p class="copy" data-t="film_3_p">A thin dough dropped in the fryer until it balloons. Every sandwich is wrapped in it and every meal comes with it.</p></div>
         </article>
         <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/tray-hands.jpg" alt="" decoding="async"></div>
+          <div class="frame-media"><img src="assets/img/ig/tray-hands.jpg" alt="" loading="lazy" decoding="async"></div>
           <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_4_w">Sides</p><h3 class="display" data-t="film_4_t">Garlic, pickles, rice</h3><p class="copy" data-t="film_4_p">Garlic dip, hummus, Turkish salad and biryani rice with curry sauce. The table is not complete without them.</p></div>
         </article>
       </div>
@@ -296,8 +298,8 @@
     </aside>
   </div>
 
-  <script src="assets/js/content.js?v=2"></script>
-  <script src="assets/js/menu-data.js?v=2"></script>
-  <script src="assets/js/site.js?v=2"></script>
+  <script src="assets/js/content.js?v=3"></script>
+  <script src="assets/js/menu-data.js?v=3"></script>
+  <script src="assets/js/site.js?v=3"></script>
 </body>
 </html>
