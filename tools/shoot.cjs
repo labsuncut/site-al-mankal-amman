@@ -10,7 +10,7 @@ const { join, extname } = require('path');
 const root = join(__dirname, '..');
 const out = process.argv[2] || join(root, '..', 'shots');
 mkdirSync(out, { recursive: true });
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.mp4': 'video/mp4', '.webm': 'video/webm' };
 (async () => {
   const server = createServer((req, res) => {
     let file = join(root, decodeURIComponent(req.url.split('?')[0]));
@@ -27,7 +27,7 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
   for (const l of ['en', 'ar']) {
     for (const [sz, vp] of Object.entries(sizes)) {
       const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: 1, locale: l === 'ar' ? 'ar-JO' : 'en-US', isMobile: sz === 'phone', hasTouch: sz === 'phone' });
-      await ctx.addInitScript((lang) => { try { localStorage.setItem('mankal-lang', lang); } catch (e) {} }, l);
+      await ctx.addInitScript((lang) => { try { localStorage.setItem('mankal-lang', lang); sessionStorage.setItem('mankal-intro', '1'); } catch (e) {} }, l);
       await ctx.route(/^(?!http:\/\/localhost)/, (r) => r.abort());
       for (const p of pages) {
         const page = await ctx.newPage();
@@ -45,9 +45,29 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
         if (/undefined|NaN|\[object/.test(over.text)) problems.push(`${l} ${sz} ${p}: undefined/NaN in text`);
         errors.forEach((e) => problems.push(`${l} ${sz} ${p}: ${e}`));
         if (p === 'index.html') await page.screenshot({ path: join(out, `hero-${l}-${sz}.png`) });
+        if (p === 'menu.html') {
+          // The basket: add two dishes, open the drawer, then the hand-over screen; and the branch sheet on the home page.
+          await page.evaluate(() => { document.querySelectorAll('[data-add]')[0].click(); document.querySelectorAll('[data-add]')[2].click(); document.querySelectorAll('[data-more]')[0].click(); });
+          await page.waitForTimeout(700);
+          await page.click('#basket-btn'); await page.waitForTimeout(600);
+          await page.screenshot({ path: join(out, `basket-${l}-${sz}.png`) });
+          await page.click('#bk-go'); await page.waitForTimeout(400);
+          await page.screenshot({ path: join(out, `handover-${l}-${sz}.png`) });
+          await page.keyboard.press('Escape'); await page.waitForTimeout(500);
+          await page.evaluate(() => { try { localStorage.removeItem('mankal-basket'); } catch (e) {} });
+        }
+        if (p === 'index.html') {
+          await page.evaluate(() => document.querySelector('[data-call]').click()); await page.waitForTimeout(600);
+          await page.screenshot({ path: join(out, `sheet-${l}-${sz}.png`) });
+          await page.keyboard.press('Escape'); await page.waitForTimeout(500);
+        }
         // A full-page capture never scrolls, so the chapters would stay unrevealed: show them as a visitor would see them.
-        await page.evaluate(() => document.querySelectorAll('.ap, .skewer').forEach((el) => el.classList.add('in')));
-        await page.waitForTimeout(900);
+        await page.evaluate(() => document.querySelectorAll('.ap, .skewer, .pop').forEach((el) => { el.style.transitionDelay = '0ms'; el.classList.add('in'); }));
+        // Load every image now (lazy ones too), walk down the page for the sticky frames, then back to the top.
+        await page.evaluate(() => document.querySelectorAll('img[loading="lazy"]').forEach((i) => { i.loading = 'eager'; }));
+        await page.waitForFunction(() => Array.from(document.images).every((i) => i.complete), null, { timeout: 8000 }).catch(() => {});
+        await page.evaluate(async () => { const h = document.documentElement.scrollHeight; for (let y = 0; y < h; y += 600) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } scrollTo(0, 0); });
+        await page.waitForTimeout(1200);
         await page.screenshot({ path: join(out, `${p.replace('.html', '')}-${l}-${sz}.png`), fullPage: true });
         await page.close();
       }
