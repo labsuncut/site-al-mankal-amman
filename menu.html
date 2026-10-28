@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Menu and ordering | Al Mankal Chicken Tikka</title>
+  <meta name="description" content="The full Al Mankal Chicken Tikka menu with prices: meals, chicken tikka, sandwiches, mezze and drinks. Order for delivery or pickup from Gardens or Sweifieh, Amman.">
+  <meta name="theme-color" content="#0c0a09">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/alfa-slab-one-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/lalezar-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css?v=1">
+  <link rel="stylesheet" href="assets/css/site.css?v=1">
+  <script src="assets/js/lang.js?v=1"></script>
+</head>
+<body data-page="menu" class="solid-header lit">
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home">
+        <span class="disc"><img src="https://cdn-v2.makane.com/cdn-cgi/image/width=120,quality=85,fit=scale-down,format=auto/20221102-store-arz3/branding/logo-91103401730.jpg" alt="" width="44" height="44" decoding="async"><span class="disc-fallback">المنقل</span></span>
+        <span class="wordmark"><span data-t="wm">Al Mankal</span><small data-t="wm_sub">Chicken tikka · since 1985</small></span>
+      </a>
+      <button class="burger" id="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+      <nav class="nav" id="nav" aria-label="Site">
+        <a href="menu.html" aria-current="page" data-t="nav_menu">Menu</a>
+        <a href="branches.html" data-t="nav_branches">Branches</a>
+        <a href="franchise.html" data-t="nav_franchise">Franchising</a>
+        <a href="index.html#story" data-t="nav_story">Story</a>
+        <button class="lang" id="lang" type="button" data-t="lang_btn">عربي</button>
+        <a class="btn btn-ember btn-small" href="#menu" data-t="nav_order">Order now</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero" aria-labelledby="mn-title">
+      <div class="wrap">
+        <p class="eyebrow" data-t="mn_eyebrow">Order online</p>
+        <h1 class="display title" id="mn-title" data-t="mn_title">The menu</h1>
+        <p class="lead" data-t="mn_lead">Everything on the grill, at the restaurant's own prices. Order opens the dish on your branch's store.</p>
+        <div class="tools">
+          <div class="seg" role="group" aria-label="Branch">
+            <span class="seg-label" data-t="mn_branch">Your branch</span>
+            <button type="button" data-branch="gardens" aria-pressed="true" data-t="br_gardens">Gardens</button>
+            <button type="button" data-branch="sweifieh" aria-pressed="false" data-t="br_sweifieh">Sweifieh</button>
+          </div>
+          <label class="search">
+            <span class="sr" data-t="mn_search">Search the menu</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="q" autocomplete="off" placeholder="Search the menu" data-ph="mn_search">
+          </label>
+        </div>
+        <p class="note branch-note" id="branch-note" hidden data-t="mn_sweifieh_note">Sweifieh orders open the Sweifieh store; pick the dish there.</p>
+      </div>
+    </section>
+
+    <div class="tabs-bar"><div class="wrap"><div class="tabs" id="tabs" role="tablist" aria-label="Categories"></div></div></div>
+
+    <section class="menu-body" id="menu">
+      <div class="wrap">
+        <div id="cats"></div>
+        <p class="empty" id="empty" hidden data-t="mn_empty">Nothing matches. Try another word.</p>
+        <p class="note menu-note" data-t="mn_note">Prices in Jordanian dinars, as listed on the store. Delivery or pickup, cash on delivery.</p>
+      </div>
+    </section>
+  </main>
+
+  <button class="totop" id="totop" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg></button>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home">
+            <span class="disc"><img src="https://cdn-v2.makane.com/cdn-cgi/image/width=120,quality=85,fit=scale-down,format=auto/20221102-store-arz3/branding/logo-91103401730.jpg" alt="" width="44" height="44" loading="lazy" decoding="async"><span class="disc-fallback">المنقل</span></span>
+            <span class="wordmark"><span data-t="wm">Al Mankal</span><small data-t="wm_sub">Chicken tikka · since 1985</small></span>
+          </a>
+          <p class="note" style="margin-top:14px" data-t="ft_order_note">Orders and payment run on the restaurant's MakanE store.</p>
+          <p><a href="https://www.facebook.com/ALMANKAL" target="_blank" rel="noopener">Facebook</a></p>
+        </div>
+        <div>
+          <h4 data-t="br_gardens">Gardens</h4>
+          <ul>
+            <li data-t="br_gardens_addr">Wasfi Al Tal Street</li>
+            <li><a class="phone" href="tel:+96265540555">06 554 0555</a></li>
+            <li><a href="https://almankal.com/#_branch119268" target="_blank" rel="noopener" data-t="br_order">Order from here</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-t="br_sweifieh">Sweifieh</h4>
+          <ul>
+            <li data-t="br_sweifieh_addr">Ali Al Sarayreh Street</li>
+            <li><a class="phone" href="tel:+96265540555">06 554 0555</a></li>
+            <li><a href="https://jordan.almankal.com/#_branch119270" target="_blank" rel="noopener" data-t="br_order">Order from here</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Al Mankal Chicken Tikka</span>
+        <span data-t="ft_made">Website by FellowFlow</span>
+        <span class="pill" data-t="ft_preview">Preview, not yet public</span>
+      </div>
+    </div>
+  </footer>
+  <div class="call-bar" aria-label="Quick actions">
+    <a class="btn btn-ember" href="#menu" data-t="bar_order">Order now</a>
+    <a class="btn btn-bone" href="tel:+96265540555" data-t="bar_call">Call</a>
+  </div>
+
+  <script src="assets/js/content.js?v=1"></script>
+  <script src="assets/js/menu-data.js?v=1"></script>
+  <script src="assets/js/site.js?v=1"></script>
+</body>
+</html>

@@ -1,1 +1,23 @@
-# site-al-mankal-amman
+# Al Mankal Chicken Tikka, Amman — preview site
+
+Showcase site for Al Mankal Chicken Tikka (Gardens and Sweifieh, Amman; owner Saif Khuffash), built by FellowFlow. **Preview only**: `noindex` (meta tags, `_headers`, `robots.txt`) until Saif approves the site.
+
+- Plain HTML, CSS and JS, no build step. Pages: `index.html` (home), `menu.html` (ordering), `branches.html`, `franchise.html`, `404.html`.
+- Every word and fact lives in `assets/js/content.js` (English and Arabic). Facts marked `CONFIRM` wait for Saif. The story chapter is a draft and carries a visible "draft" tag until the family tells it.
+- The menu is `assets/js/menu-data.js`: the restaurant's own MakanE catalogue (73 dishes, names, descriptions, prices, photos), read from almankal.com on 28 October 2026. Regenerate it when the menu changes (see `tools/`).
+- **Ordering stays on MakanE.** Every Order button opens that dish's own page on the restaurant's store (`https://almankal.com/products/<slug>`), where the basket, phone check, delivery and cash payment live. The Sweifieh switch opens the Sweifieh store (`jordan.almankal.com`); its dish addresses are still to confirm.
+- Photos and the logo are hot-linked from the store's CDN (`cdn-v2.makane.com`, allowed in the CSP). A dish without a photo gets a "coal plate" with its name; if a photo fails to load the card falls back to the same plate. Replace with the restaurant's own photos after the shoot.
+- Fonts are self-hosted in `assets/fonts/`: Alfa Slab One and Lalezar (display), Fraunces italic and Aref Ruqaa (lead lines), Rubik (body, Latin and Arabic).
+- The hero's coals and embers are two canvases drawn in `assets/js/site.js`; they pause off screen and settle to one still frame with Reduce Motion on.
+- Language: `assets/js/lang.js` picks Arabic for Arabic browsers on the first visit, otherwise English; the header button switches and remembers the choice.
+- Every release that changes the CSS or JS bumps the `?v=` number on their links in the HTML pages, so visitors never get new HTML with cached old styles.
+
+Preview: https://al-mankal-amman.pages.dev (Cloudflare Pages from `main`).
+
+## Quality pass
+
+`NODE_PATH=$(npm root -g) node tools/shoot.cjs ../shots` serves the site locally, blocks outside requests, captures every page at 375 px and 1280 px in English and Arabic, and reports console errors, sideways scroll and stray "undefined" text. It must print `no problems`.
+
+## At launch
+
+Remove the `noindex` meta tags, the `X-Robots-Tag` line in `_headers` and the `Disallow` in `robots.txt`; point `sitemap.xml` and `robots.txt` at `almankal.com`; add `og:image`; replace hot-linked photos with the restaurant's own.
