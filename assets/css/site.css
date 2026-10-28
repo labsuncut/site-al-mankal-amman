@@ -3,9 +3,9 @@
    ember #ff7a1a, flame #ffb13b, yolk #f5c518 (the yellow of the logo), brand red #c8102e (the logo).
    Display: Alfa Slab One (EN) / Lalezar (AR): heavy, warm, signage. Lead lines: Fraunces italic (EN) / Aref Ruqaa (AR).
    Body: Rubik, one family for both scripts.
-   Signature: the entry burns the logo in from the bottom up, then the curtain lifts onto the restaurant's own grill
+   Signature: the entry burns the logo in from the bottom up (a soot cover slides off it), then the curtain lifts onto the restaurant's own grill
    (real coals, real chicken, embers rising through the words). Food photos carry every chapter after that.
-   Motion rules: only transform, opacity, clip-path and mask-position animate; nothing changes its height.
+   Motion rules: only transform and opacity animate; nothing changes its height.
    Hover only on fine pointers. Reduce Motion keeps the entry (shorter) and drops the loops. */
 :root {
   --soot: #0c0a09;
@@ -148,19 +148,23 @@ body.nav-open .burger span:nth-child(3) { transform: translateY(-8px) rotate(-45
   .nav .lang { font-family: var(--body); }
 }
 
-/* THE ENTRY. A soot curtain; the logo burns in from the bottom up (a mask that slides) with a heat edge sweeping ahead of it,
+/* Chapters well below the fold skip layout and paint until they come near the screen (the film keeps its own sticky maths). */
+.reels-chapter, #how, #branches, #story, .band, .foot { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+/* THE ENTRY. A soot curtain; the logo burns in from the bottom up (a soot cover slides off it) with a heat edge sweeping ahead of it,
    sparks drift, the line under it fades in, then the curtain lifts onto the grill. Once per tab session (site.js). */
 .intro { position: fixed; inset: 0; z-index: 60; background: var(--soot); display: grid; place-items: center; overflow: hidden; }
 .intro::before { content: ''; position: absolute; inset: auto 0 -30%; height: 80%; background: radial-gradient(50% 60% at 50% 100%, rgba(255, 122, 26, .4), rgba(200, 16, 46, .14) 45%, transparent 72%); opacity: 0; transition: opacity 1200ms var(--ease); }
 .intro.burn::before { opacity: 1; }
 .intro-stage { position: relative; text-align: center; padding: 0 var(--gutter); transition: transform 700ms var(--ease), opacity 500ms var(--ease); }
-.intro-logo { position: relative; width: min(64vw, 380px); margin: 0 auto 26px; }
-.intro-logo img { width: 100%; height: auto; }
-.intro-logo img:first-child { -webkit-mask-image: linear-gradient(to top, #000 0%, #000 60%, transparent 70%, transparent 100%); mask-image: linear-gradient(to top, #000 0%, #000 60%, transparent 70%, transparent 100%); -webkit-mask-size: 100% 300%; mask-size: 100% 300%; -webkit-mask-position: 0 0; mask-position: 0 0; }
-.intro-logo .heat { position: absolute; inset: 0; opacity: 0; filter: brightness(2.2) saturate(1.5) sepia(.6) hue-rotate(-18deg) drop-shadow(0 0 14px rgba(255, 140, 40, .9)); -webkit-mask-image: linear-gradient(to top, transparent 0%, transparent 56%, #000 62%, #000 66%, transparent 72%, transparent 100%); mask-image: linear-gradient(to top, transparent 0%, transparent 56%, #000 62%, #000 66%, transparent 72%, transparent 100%); -webkit-mask-size: 100% 300%; mask-size: 100% 300%; -webkit-mask-position: 0 0; mask-position: 0 0; }
-.intro.burn .intro-logo img:first-child { animation: burn-in 1150ms cubic-bezier(.4, 0, .2, 1) forwards; }
-.intro.burn .intro-logo .heat { animation: burn-in 1150ms cubic-bezier(.4, 0, .2, 1) forwards, heat-fade 1150ms linear forwards; }
-@keyframes burn-in { from { -webkit-mask-position: 0 0; mask-position: 0 0; } to { -webkit-mask-position: 0 100%; mask-position: 0 100%; } }
+.intro-logo { position: relative; width: min(64vw, 380px); margin: 0 auto 26px; overflow: hidden; }
+.intro-logo img { display: block; width: 100%; height: auto; }
+/* The burn is a soot cover that slides up off the logo (transform only, so the phone's GPU does all of it):
+   its lower edge fades out, and a band of heat glows along that edge as it rises. */
+.intro-logo .cover { position: absolute; left: -2%; right: -2%; top: -20%; bottom: -16%; background: linear-gradient(to bottom, var(--soot) 0%, var(--soot) 89%, transparent 100%); transform: translateY(0); will-change: transform; }
+.intro-logo .cover .heat { position: absolute; left: -10%; right: -10%; bottom: -4%; height: 20%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 190, 80, .9), rgba(255, 122, 26, .55) 38%, rgba(200, 16, 46, .18) 62%, transparent 75%); opacity: 0; will-change: opacity; }
+.intro.burn .intro-logo .cover { animation: burn-in 1150ms cubic-bezier(.4, 0, .2, 1) forwards; }
+.intro.burn .intro-logo .cover .heat { animation: heat-fade 1150ms linear forwards; }
+@keyframes burn-in { from { transform: translateY(0); } to { transform: translateY(-140%); } }
 @keyframes heat-fade { 0% { opacity: 0; } 10% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
 .intro-line { font-family: var(--lead); font-style: italic; font-size: clamp(1.1rem, 1rem + 1vw, 1.5rem); color: var(--flame); margin: 0; opacity: 0; transform: translateY(8px); transition: opacity 600ms var(--ease-out), transform 700ms var(--ease-out); letter-spacing: .02em; }
 html[lang="ar"] .intro-line { font-style: normal; letter-spacing: 0; }
@@ -168,8 +172,11 @@ html[lang="ar"] .intro-line { font-style: normal; letter-spacing: 0; }
 .intro .spark { position: absolute; bottom: -10px; left: var(--x, 50%); width: 4px; height: 4px; border-radius: 50%; background: var(--flame); box-shadow: 0 0 10px 2px rgba(255, 140, 40, .6); opacity: 0; }
 .intro.burn .spark { animation: spark 2200ms var(--d, 0ms) ease-out infinite; }
 .intro .spark:nth-child(2) { --x: 18%; --d: 120ms; } .intro .spark:nth-child(3) { --x: 31%; --d: 640ms; } .intro .spark:nth-child(4) { --x: 44%; --d: 260ms; } .intro .spark:nth-child(5) { --x: 55%; --d: 900ms; } .intro .spark:nth-child(6) { --x: 63%; --d: 40ms; } .intro .spark:nth-child(7) { --x: 74%; --d: 520ms; } .intro .spark:nth-child(8) { --x: 86%; --d: 760ms; } .intro .spark:nth-child(9) { --x: 92%; --d: 1100ms; }
-@keyframes spark { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(calc(var(--sx, 1) * 24px), -72vh) scale(.3); opacity: 0; } }
-.intro.lift { clip-path: inset(0 0 100% 0); transition: clip-path 760ms cubic-bezier(.76, 0, .24, 1); pointer-events: none; }
+@keyframes spark { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(22px, -72vh) scale(.3); opacity: 0; } }
+@keyframes spark-l { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(-22px, -72vh) scale(.3); opacity: 0; } }
+.intro.burn .spark:nth-child(even) { animation-name: spark-l; }
+.intro { will-change: transform; }
+.intro.lift { transform: translateY(-102%); transition: transform 760ms cubic-bezier(.76, 0, .24, 1); pointer-events: none; }
 .intro.lift .intro-stage { transform: translateY(-40px) scale(1.04); opacity: 0; }
 .intro.gone { display: none; }
 body.intro-wait { overflow: hidden; }
@@ -192,7 +199,7 @@ html[dir="rtl"] .hero-shade { background:
 .hero-in { position: relative; z-index: 2; width: 100%; max-width: var(--wrap); margin: 0 auto; padding: calc(var(--header) + 16px) var(--gutter) 80px; will-change: transform, opacity; }
 .hero-in > * { max-width: 600px; }
 .hero-logo { width: auto; height: clamp(200px, 34vh, 330px); margin: 0 0 18px; position: relative; perspective: 900px; }
-.hero-logo img { height: 100%; width: auto; filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .55)); transform-style: preserve-3d; will-change: transform; }
+.hero-logo img { height: 100%; width: auto; filter: drop-shadow(0 14px 22px rgba(0, 0, 0, .5)); transform-style: preserve-3d; will-change: transform; }
 .hero-logo::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: -18px; height: 40px; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 122, 26, .55), transparent 70%); filter: blur(8px); animation: heat 3.2s ease-in-out infinite alternate; pointer-events: none; }
 @keyframes heat { from { opacity: .55; transform: scaleX(.9); } to { opacity: 1; transform: scaleX(1.08); } }
 .hero .eyebrow { margin-bottom: .6em; }
@@ -205,8 +212,9 @@ html[lang="ar"] .ticket { font-style: normal; font-size: 1.05rem; }
 .ticket i { width: 5px; height: 5px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 8px var(--ember); }
 .hero-hint { position: absolute; bottom: 22px; left: 0; right: 0; z-index: 2; font-family: var(--lead); font-style: italic; font-size: .9rem; color: var(--ash); display: flex; flex-direction: column; align-items: center; gap: 8px; }
 html[lang="ar"] .hero-hint { font-style: normal; }
-.hero-hint::after { content: ''; width: 1px; height: 36px; background: linear-gradient(var(--ash), transparent); animation: drip 1.8s var(--ease) infinite; }
-@keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.hero-hint .drip { position: relative; display: block; width: 1px; height: 36px; overflow: hidden; }
+.hero-hint .drip::before { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent, var(--ash) 40%, var(--ash) 60%, transparent); animation: drip 1.8s var(--ease) infinite; }
+@keyframes drip { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
 /* Entrance: everything waits in the dark, then rises in order once the curtain lifts. */
 .hero .rise { opacity: 0; transform: translateY(18px); transition: opacity 700ms var(--ease-out), transform 900ms var(--ease-out); }
 .hero .hero-logo.rise { transform: translateY(10px) scale(.96); }
@@ -583,8 +591,8 @@ html[lang="ar"] .fstep .n { font-style: normal; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .hero .rise, .ap, .pop { transition-duration: 1ms; transition-delay: 0ms !important; }
-  .hero-hint::after, .hero-logo::after, .intro .spark { animation: none; }
-  .intro.burn .intro-logo img:first-child, .intro.burn .intro-logo .heat { animation-duration: 500ms; }
+  .hero-hint .drip::before, .hero-logo::after, .intro .spark { animation: none; }
+  .intro.burn .intro-logo .cover, .intro.burn .intro-logo .cover .heat { animation-duration: 500ms; }
   .intro.burn .intro-line { transition-delay: 300ms; }
   .skewer::after { transition-duration: 1ms; }
   .plate-media img, .dish-media img { transition: none; }

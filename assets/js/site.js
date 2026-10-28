@@ -302,15 +302,26 @@
   // ---------- the entry and the hero ----------
   const intro = $('#intro'), hero = $('.hero');
   function light() { body.classList.add('lit'); body.classList.remove('intro-wait'); }
+  // While the entry plays, the hero keeps still: the grill film starts loading just before the curtain lifts
+  // and plays (with the embers) only once it has, so the burn-in has the phone to itself.
+  const heroHooks = { load() {}, wake() {} };
+  let introPlaying = false;
   if (intro) {
     const seen = session.get('mankal-intro');
     if (seen) { intro.classList.add('gone'); requestAnimationFrame(light); }
     else {
+      introPlaying = true;
       body.classList.add('intro-wait');
-      const burnAt = 120, liftAt = reduce ? 1000 : 1900, goneAt = liftAt + (reduce ? 500 : 800);
-      setTimeout(() => intro.classList.add('burn'), burnAt);
-      setTimeout(() => { intro.classList.add('lift'); light(); session.set('mankal-intro', '1'); }, liftAt);
-      setTimeout(() => intro.classList.add('gone'), goneAt);
+      // The burn starts only once the page beneath has had its first layout and paint (two frames in), so the
+      // slide runs on an idle main thread; everything after is timed from that moment.
+      const hold = reduce ? 880 : 1780, gone = reduce ? 500 : 800;
+      const go = () => {
+        intro.classList.add('burn');
+        setTimeout(heroHooks.load, Math.max(0, hold - 700));
+        setTimeout(() => { intro.classList.add('lift'); light(); session.set('mankal-intro', '1'); heroHooks.wake(); }, hold);
+        setTimeout(() => intro.classList.add('gone'), hold + gone);
+      };
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));
     }
   } else if (!body.classList.contains('lit')) {
     requestAnimationFrame(light);
@@ -323,11 +334,12 @@
     const file = tall ? 'grill-tall' : 'grill-wide';
     video.poster = `assets/img/${file}.jpg`;
     const canH264 = video.canPlayType('video/mp4; codecs="avc1.4d401e"');
-    video.src = canH264 ? `assets/video/${file}.mp4` : `assets/video/${file}.webm`;
+    const src = canH264 ? `assets/video/${file}.mp4` : `assets/video/${file}.webm`;
+    let awake = false;
     video.addEventListener('playing', () => video.classList.add('on'), { once: true });
     let heroVisible = true;
-    function playVideo() { if (reduce || !heroVisible || document.hidden) return; const p = video.play(); if (p && p.catch) p.catch(() => {}); }
-    if (!reduce) playVideo();
+    function playVideo() { if (!awake || reduce || !heroVisible || document.hidden) return; const p = video.play(); if (p && p.catch) p.catch(() => {}); }
+    heroHooks.load = () => { if (!reduce && !video.src) video.src = src; };
     document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); else playVideo(); });
 
     // Embers rise from the coals in the film, through the words.
@@ -364,7 +376,7 @@
       }
       requestAnimationFrame(frame);
     }
-    function start() { if (running || reduce || !heroVisible || document.hidden) return; running = true; last = 0; requestAnimationFrame(frame); }
+    function start() { if (!awake || running || reduce || !heroVisible || document.hidden) return; running = true; last = 0; requestAnimationFrame(frame); }
     function stop() { running = false; }
     // The hero stays put while the next chapter slides over it; its words sink and fade as they go,
     // and a pull of air (bellow) sends more embers up when the scroll starts.
@@ -385,7 +397,9 @@
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', size);
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
-    size(); start();
+    size();
+    heroHooks.wake = () => { awake = true; playVideo(); start(); };
+    if (!introPlaying) { heroHooks.load(); heroHooks.wake(); }
     // The logo answers the pointer with a slow tilt (a lerp, never 1:1). Fine pointers only.
     if (fine && !reduce && logoImg) {
       let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
