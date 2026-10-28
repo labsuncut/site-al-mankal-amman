@@ -3,47 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- PREVIEW: noindex until Saif Khuffash approves the site. Remove this tag, the Disallow in robots.txt and X-Robots-Tag in _headers at launch. -->
   <meta name="robots" content="noindex, nofollow">
   <title>Menu and ordering | Al Mankal Chicken Tikka</title>
-  <meta name="description" content="The full Al Mankal Chicken Tikka menu with prices: meals, chicken tikka, sandwiches, mezze and drinks. Order for delivery or pickup from Gardens or Sweifieh, Amman.">
+  <meta name="description" content="The full Al Mankal Chicken Tikka menu with photos and prices: meals, chicken tikka, sandwiches, mezze and drinks. Fill your basket and order for delivery or pickup from Gardens or Sweifieh, Amman.">
   <meta name="theme-color" content="#0c0a09">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/alfa-slab-one-latin-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/lalezar-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/fonts.css?v=1">
-  <link rel="stylesheet" href="assets/css/site.css?v=1">
-  <script src="assets/js/lang.js?v=1"></script>
+  <link rel="stylesheet" href="assets/css/fonts.css?v=2">
+  <link rel="stylesheet" href="assets/css/site.css?v=2">
+  <script src="assets/js/lang.js?v=2"></script>
 </head>
 <body data-page="menu" class="solid-header lit">
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home">
-        <span class="disc"><img src="https://cdn-v2.makane.com/cdn-cgi/image/width=120,quality=85,fit=scale-down,format=auto/20221102-store-arz3/branding/logo-91103401730.jpg" alt="" width="44" height="44" decoding="async"><span class="disc-fallback">المنقل</span></span>
-        <span class="wordmark"><span data-t="wm">Al Mankal</span><small data-t="wm_sub">Chicken tikka · since 1985</small></span>
-      </a>
-      <button class="burger" id="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+      <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home"><img src="assets/img/logo-small.png" alt="" width="62" height="55" decoding="async"></a>
       <nav class="nav" id="nav" aria-label="Site">
         <a href="menu.html" aria-current="page" data-t="nav_menu">Menu</a>
         <a href="branches.html" data-t="nav_branches">Branches</a>
         <a href="franchise.html" data-t="nav_franchise">Franchising</a>
         <a href="index.html#story" data-t="nav_story">Story</a>
         <button class="lang" id="lang" type="button" data-t="lang_btn">عربي</button>
-        <a class="btn btn-ember btn-small" href="#menu" data-t="nav_order">Order now</a>
+        <a class="btn btn-ember btn-small" href="menu.html" data-t="nav_order">Order now</a>
       </nav>
+      <div class="header-tools">
+        <button class="basket-btn" id="basket-btn" type="button" aria-label="Basket" data-t-aria="nav_basket" aria-haspopup="dialog" aria-controls="basket">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18l-1.6 9.2a2 2 0 0 1-2 1.8H6.6a2 2 0 0 1-2-1.8L3 10z"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          <span class="badge" id="basket-count" hidden>0</span>
+        </button>
+        <button class="burger" id="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
     </div>
   </header>
 
   <main>
-    <section class="page-hero" aria-labelledby="mn-title">
+    <section class="page-hero menu-hero" aria-labelledby="mn-title">
+      <div class="menu-hero-media" aria-hidden="true"><img src="assets/img/ig/grill-rows.jpg" alt="" decoding="async"></div>
       <div class="wrap">
         <p class="eyebrow" data-t="mn_eyebrow">Order online</p>
         <h1 class="display title" id="mn-title" data-t="mn_title">The menu</h1>
-        <p class="lead" data-t="mn_lead">Everything on the grill, at the restaurant's own prices. Order opens the dish on your branch's store.</p>
+        <p class="lead" data-t="mn_lead">Everything on the grill, at the restaurant's own prices. Add to your basket, then checkout.</p>
         <div class="tools">
-          <div class="seg" role="group" aria-label="Branch">
+          <div class="seg-wrap">
             <span class="seg-label" data-t="mn_branch">Your branch</span>
-            <button type="button" data-branch="gardens" aria-pressed="true" data-t="br_gardens">Gardens</button>
-            <button type="button" data-branch="sweifieh" aria-pressed="false" data-t="br_sweifieh">Sweifieh</button>
+            <div class="seg" role="group" aria-label="Branch">
+              <button type="button" data-branch="gardens" aria-pressed="true" data-t="br_gardens">Gardens</button>
+              <button type="button" data-branch="sweifieh" aria-pressed="false" data-t="br_sweifieh">Sweifieh</button>
+            </div>
           </div>
           <label class="search">
             <span class="sr" data-t="mn_search">Search the menu</span>
@@ -51,7 +58,7 @@
             <input type="search" id="q" autocomplete="off" placeholder="Search the menu" data-ph="mn_search">
           </label>
         </div>
-        <p class="note branch-note" id="branch-note" hidden data-t="mn_sweifieh_note">Sweifieh orders open the Sweifieh store; pick the dish there.</p>
+        <p class="note branch-note" id="branch-note" hidden data-t="mn_sweifieh_note">Sweifieh orders finish on the Sweifieh order page.</p>
       </div>
     </section>
 
@@ -59,9 +66,11 @@
 
     <section class="menu-body" id="menu">
       <div class="wrap">
+        <div class="sig-row-head"><h2 class="display" data-t="mn_sig">Signature</h2></div>
+        <div class="sig-row" id="sig-row"></div>
         <div id="cats"></div>
         <p class="empty" id="empty" hidden data-t="mn_empty">Nothing matches. Try another word.</p>
-        <p class="note menu-note" data-t="mn_note">Prices in Jordanian dinars, as listed on the store. Delivery or pickup, cash on delivery.</p>
+        <p class="note menu-note" data-t="mn_note">Prices in Jordanian dinars, as listed by the restaurant. Delivery or pickup, cash on delivery.</p>
       </div>
     </section>
   </main>
@@ -72,11 +81,8 @@
     <div class="wrap">
       <div class="foot-grid">
         <div>
-          <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home">
-            <span class="disc"><img src="https://cdn-v2.makane.com/cdn-cgi/image/width=120,quality=85,fit=scale-down,format=auto/20221102-store-arz3/branding/logo-91103401730.jpg" alt="" width="44" height="44" loading="lazy" decoding="async"><span class="disc-fallback">المنقل</span></span>
-            <span class="wordmark"><span data-t="wm">Al Mankal</span><small data-t="wm_sub">Chicken tikka · since 1985</small></span>
-          </a>
-          <p class="note" style="margin-top:14px" data-t="ft_order_note">Orders and payment run on the restaurant's MakanE store.</p>
+          <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home"><img src="assets/img/logo-small.png" alt="" width="90" height="80" loading="lazy" decoding="async"></a>
+          <p class="note" style="margin-top:14px" data-t="ft_order_note">Checkout and payment run on the restaurant's own order page.</p>
           <p><a href="https://www.facebook.com/ALMANKAL" target="_blank" rel="noopener">Facebook</a></p>
         </div>
         <div>
@@ -84,7 +90,7 @@
           <ul>
             <li data-t="br_gardens_addr">Wasfi Al Tal Street</li>
             <li><a class="phone" href="tel:+96265540555">06 554 0555</a></li>
-            <li><a href="https://almankal.com/#_branch119268" target="_blank" rel="noopener" data-t="br_order">Order from here</a></li>
+            <li><a href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></li>
           </ul>
         </div>
         <div>
@@ -92,7 +98,7 @@
           <ul>
             <li data-t="br_sweifieh_addr">Ali Al Sarayreh Street</li>
             <li><a class="phone" href="tel:+96265540555">06 554 0555</a></li>
-            <li><a href="https://jordan.almankal.com/#_branch119270" target="_blank" rel="noopener" data-t="br_order">Order from here</a></li>
+            <li><a href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></li>
           </ul>
         </div>
       </div>
@@ -104,12 +110,47 @@
     </div>
   </footer>
   <div class="call-bar" aria-label="Quick actions">
-    <a class="btn btn-ember" href="#menu" data-t="bar_order">Order now</a>
-    <a class="btn btn-bone" href="tel:+96265540555" data-t="bar_call">Call</a>
+    <button class="btn btn-ember" id="bar-basket" type="button"><span data-t="bar_order">Order now</span><span class="bar-count" id="bar-count" hidden>0</span></button>
+    <button class="btn btn-bone" type="button" data-call data-t="bar_call">Call</button>
   </div>
 
-  <script src="assets/js/content.js?v=1"></script>
-  <script src="assets/js/menu-data.js?v=1"></script>
-  <script src="assets/js/site.js?v=1"></script>
+  <!-- Which branch? Every Call button opens this sheet: both branches share one number. -->
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+    <div class="sheet-back" data-close-sheet></div>
+    <div class="sheet-panel">
+      <div class="sheet-grip" aria-hidden="true"></div>
+      <h2 class="display" id="sheet-title" data-t="sheet_title">Which branch?</h2>
+      <p class="note" data-t="sheet_lead">Both branches answer on the same number.</p>
+      <div class="sheet-branches">
+        <div class="sb">
+          <b class="display" data-t="br_gardens">Gardens</b><span data-t="br_gardens_addr">Wasfi Al Tal Street</span>
+          <div class="actions"><a class="btn btn-ember btn-small" href="tel:+96265540555" data-t="sheet_call">Call 06 554 0555</a><a class="btn btn-bone btn-small" href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></div>
+        </div>
+        <div class="sb">
+          <b class="display" data-t="br_sweifieh">Sweifieh</b><span data-t="br_sweifieh_addr">Ali Al Sarayreh Street</span>
+          <div class="actions"><a class="btn btn-ember btn-small" href="tel:+96265540555" data-t="sheet_call">Call 06 554 0555</a><a class="btn btn-bone btn-small" href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></div>
+        </div>
+      </div>
+      <button class="x" type="button" data-close-sheet aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+  </div>
+
+  <!-- The basket: lives in localStorage, rendered by site.js. Checkout hands over to the restaurant's order page. -->
+  <div class="drawer" id="basket" role="dialog" aria-modal="true" aria-labelledby="bk-title" hidden>
+    <div class="drawer-back" data-close-basket></div>
+    <aside class="drawer-panel">
+      <header class="drawer-head">
+        <h2 class="display" id="bk-title" data-t="bk_title">Your basket</h2>
+        <span class="drawer-count" id="bk-count"></span>
+        <button class="x" type="button" data-close-basket aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </header>
+      <div class="drawer-body" id="bk-body"></div>
+      <footer class="drawer-foot" id="bk-foot"></footer>
+    </aside>
+  </div>
+
+  <script src="assets/js/content.js?v=2"></script>
+  <script src="assets/js/menu-data.js?v=2"></script>
+  <script src="assets/js/site.js?v=2"></script>
 </body>
 </html>

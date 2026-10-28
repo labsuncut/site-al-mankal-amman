@@ -2,22 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>Page not found | Al Mankal Chicken Tikka</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- PREVIEW: noindex until Saif Khuffash approves the site. Remove this tag, the Disallow in robots.txt and X-Robots-Tag in _headers at launch. -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Not found | Al Mankal Chicken Tikka</title>
+  <meta name="description" content="This page is not on the menu.">
   <meta name="theme-color" content="#0c0a09">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/css/fonts.css?v=1">
-  <link rel="stylesheet" href="assets/css/site.css?v=1">
+  <link rel="preload" href="assets/fonts/alfa-slab-one-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/lalezar-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css?v=2">
+  <link rel="stylesheet" href="assets/css/site.css?v=2">
+  <script src="assets/js/lang.js?v=2"></script>
 </head>
-<body class="lit">
+<body data-page="nf" class="solid-header lit">
   <main class="lost">
     <div>
-      <span class="disc no-img" aria-hidden="true"><span class="disc-fallback" style="font-size:2rem">المنقل</span></span>
-      <h1 class="display title">This plate isn't on the menu.</h1>
-      <p class="lead" lang="ar" dir="rtl" style="margin-inline:auto">هذا الطبق مش على القائمة.</p>
-      <p><a class="btn btn-ember" href="./">Al Mankal home · الرئيسية</a></p>
+      <img class="lost-logo" src="assets/img/logo.png" alt="Al Mankal Chicken Tikka" width="900" height="800">
+      <h1 class="display title" data-t="nf_title">This plate isn't on the menu.</h1>
+      <p><a class="btn btn-ember" href="./" data-t="nf_home">Back to Al Mankal</a></p>
     </div>
   </main>
+  <script src="assets/js/content.js?v=2"></script>
+  <script src="assets/js/menu-data.js?v=2"></script>
+  <script src="assets/js/site.js?v=2"></script>
 </body>
 </html>
