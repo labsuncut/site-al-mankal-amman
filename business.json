@@ -1,0 +1,27 @@
+{
+  "name": "Al Mankal Chicken Tikka",
+  "name_ar": "المنقل تشكن تكا",
+  "slug": "al-mankal-amman",
+  "type": "Restaurant",
+  "tagline": "Chicken tikka, healthy and on charcoal, since 1985",
+  "phone": "+96265540555",
+  "phone_display": "06 554 0555",
+  "whatsapp": "",
+  "email": "",
+  "website_current": "https://almankal.com",
+  "ordering_platform": "MakanE (store at almankal.com, Gardens tenant 119268; jordan.almankal.com, Sweifieh tenant 119270)",
+  "payment": "cash on delivery",
+  "delivery": "delivery and pickup",
+  "branches": [
+    { "name": "Gardens", "name_ar": "الجاردنز", "street": "Wasfi Al Tal Street", "street_ar": "شارع وصفي التل", "city": "Amman", "store": "https://almankal.com/#_branch119268" },
+    { "name": "Sweifieh", "name_ar": "الصويفية", "street": "Ali Al Sarayreh Street", "street_ar": "شارع علي الصرايرة", "city": "Amman", "store": "https://jordan.almankal.com/#_branch119270" }
+  ],
+  "hours": "",
+  "facebook": "https://www.facebook.com/ALMANKAL",
+  "instagram": "",
+  "owner": "Saif Khuffash",
+  "colours": { "brand_red": "#c8102e", "logo_yellow": "#f5c518", "ember": "#ff7a1a", "soot": "#0c0a09", "cream": "#f6eddc" },
+  "domain": "",
+  "preview": "https://al-mankal-amman.pages.dev",
+  "source": "The restaurant's MakanE store, read 28 October 2026. Nothing else; empty fields are unknown."
+}

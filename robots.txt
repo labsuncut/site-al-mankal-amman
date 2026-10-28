@@ -1,0 +1,6 @@
+# PREVIEW: blocks all crawlers until Saif Khuffash approves the site. At launch, change "Disallow: /" to
+# "Allow: /" and point the Sitemap line at almankal.com.
+User-agent: *
+Disallow: /
+
+Sitemap: https://al-mankal-amman.pages.dev/sitemap.xml

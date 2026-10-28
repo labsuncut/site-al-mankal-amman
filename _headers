@@ -1,0 +1,11 @@
+# Security headers for Cloudflare Pages (GitHub Pages ignores this file).
+# img-src allows the restaurant's own photos and logo from its MakanE store CDN; frame-src the Google Maps embeds.
+# PREVIEW: X-Robots-Tag noindex keeps this address out of Google. Remove it at launch, with the meta robots tags and the Disallow line in robots.txt.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn-v2.makane.com https://cdn.makane.com; font-src 'self'; frame-src https://www.google.com https://maps.google.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Robots-Tag: noindex
