@@ -488,15 +488,26 @@
   const onScroll = () => body.classList.toggle('scrolled', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  // ---------- the hero photo answers the pointer with a slow tilt (a lerp, never 1:1); on phones it drifts with the scroll ----------
-  const heroImg = $('.hero .ph img'), heroPh = $('.hero-photo');
-  if (heroImg && fine && !reduce) {
-    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
-    const ease = () => { cx += (tx - cx) * .08; cy += (ty - cy) * .08; heroImg.style.transform = `scale(1.06) translate(${cx}px, ${cy}px)`; if (Math.abs(tx - cx) > .05 || Math.abs(ty - cy) > .05) raf = requestAnimationFrame(ease); else raf = 0; };
-    heroImg.addEventListener('animationend', () => {
-      heroPh.addEventListener('pointermove', (e) => { const r = heroPh.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5) * -18; ty = ((e.clientY - r.top) / r.height - .5) * -18; if (!raf) raf = requestAnimationFrame(ease); });
-      heroPh.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(ease); });
-    }, { once: true });
+  // ---------- the mankal in the hero: the fire film and the sparks run only while the brazier is on screen and after the curtain; a hand or a finger on it fans the coals ----------
+  const mk = $('#hero-mankal');
+  let wakeMankal = () => {};
+  if (mk) {
+    const vid = $('#mankal-flame', mk), sp = $('#mankal-sparks', mk);
+    const src = vid.canPlayType('video/mp4; codecs="avc1.4d401e"') ? (innerWidth < 700 ? 'assets/video/flame-sm.mp4' : 'assets/video/flame.mp4') : 'assets/video/flame.webm';
+    let sparks = null, on = false, seen = false, lit = false, fanT = 0;
+    const start = () => {
+      if (on || !seen || !lit || reduce) return; on = true;
+      if (!vid.src) vid.src = src;
+      const p = vid.play(); if (p && p.catch) p.catch(() => {});
+      if (!sparks) { const r = mk.getBoundingClientRect(); sparks = flame(sp, r.width / 2, r.top + r.height * .62, r.top + r.height * .12, true); }
+      sparks.start();
+    };
+    const stop = () => { if (!on) return; on = false; vid.pause(); if (sparks) sparks.stop(); };
+    const fan = () => { if (!on) return; mk.classList.add('fan'); vid.playbackRate = 1.6; if (sparks && sparks.burst) sparks.burst(14); clearTimeout(fanT); fanT = setTimeout(() => { mk.classList.remove('fan'); vid.playbackRate = 1; }, 900); };
+    new IntersectionObserver((es) => es.forEach((e) => { seen = e.isIntersecting; seen ? start() : stop(); }), { threshold: .15 }).observe(mk);
+    wakeMankal = () => { lit = true; start(); setTimeout(fan, 1150); };
+    mk.addEventListener('pointerenter', fan); mk.addEventListener('pointerdown', fan);
+    let rT = 0; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (sparks) { sparks.stop(); sparks = null; } if (on) { on = false; start(); } }, 200); });
   }
 
   // ---------- the fire band: the grill loop and the embers, only while on screen ----------
@@ -669,7 +680,7 @@
   }
 
   const intro = $('#intro');
-  const light = () => { body.classList.add('lit'); if (page === 'home') setTimeout(emberToCall, 3450); };
+  const light = () => { body.classList.add('lit'); wakeMankal(); if (page === 'home') setTimeout(emberToCall, 3450); };
   if (intro && !session.get('mankal-intro')) {
     body.classList.add('intro-wait');
     const drop = $('.intro-drop', intro), impact = $('.intro-impact', intro), bed = $('#intro-bed', intro), hole = $('.hole', bed), hot = $('.hot', bed), logo = $('.intro-logo', intro);

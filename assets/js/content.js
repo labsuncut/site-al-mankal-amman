@@ -76,7 +76,6 @@ const TEXT = {
 
     hero_eyebrow: 'Gardens · Sweifieh · Amman',
     hero_title: 'On the coals since 1985',
-    hero_alt: 'A table of Al Mankal chicken tikka, kebab skewers, puri bread, hummus and garlic dip, seen from above',
     lead: 'Chicken tikka, kebab and tawook over charcoal, with puri bread and garlic.',
     how: 'How do you want it?', mode_aria: 'Delivery or pickup',
     delivery: 'Delivery', pickup: 'Pickup', from: 'From',
@@ -168,7 +167,6 @@ const TEXT = {
 
     hero_eyebrow: 'الجاردنز · الصويفية · عمّان',
     hero_title: 'على الفحم من سنة ١٩٨٥',
-    hero_alt: 'سفرة من المنقل: تشكن تكا، أسياخ كباب، خبز بوري، حمص ومثومة، من فوق',
     lead: 'تكا وكباب وطاووق على الفحم، مع خبز البوري والمثومة.',
     how: 'كيف بدك طلبك؟', mode_aria: 'توصيل أو استلام',
     delivery: 'توصيل', pickup: 'استلام', from: 'من فرع',

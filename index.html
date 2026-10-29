@@ -16,7 +16,6 @@
   <link rel="preload" as="image" href="assets/img/s/logo-760.webp">
   <link rel="preload" as="image" href="assets/img/s/bed-cold.webp">
   <link rel="preload" as="image" href="assets/img/s/bed-2.webp">
-  <link rel="preload" as="image" type="image/avif" imagesrcset="assets/img/s/spread-marble-480.avif 480w, assets/img/s/spread-marble-800.avif 800w, assets/img/s/spread-marble-1080.avif 1080w" imagesizes="(min-width: 900px) 50vw, 100vw">
   <meta property="og:title" content="Al Mankal Chicken Tikka | On the coals since 1985">
   <meta property="og:description" content="Chicken tikka grilled over real coals in Amman since 1985. Order from Gardens or Sweifieh.">
   <meta property="og:type" content="website">
@@ -77,12 +76,17 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-photo">
-          <div class="ph">
-            <picture>
-              <source type="image/avif" srcset="assets/img/s/spread-marble-480.avif 480w, assets/img/s/spread-marble-800.avif 800w, assets/img/s/spread-marble-1080.avif 1080w" sizes="(min-width: 900px) 50vw, 100vw">
-              <source type="image/webp" srcset="assets/img/s/spread-marble-480.webp 480w, assets/img/s/spread-marble-800.webp 800w, assets/img/s/spread-marble-1080.webp 1080w" sizes="(min-width: 900px) 50vw, 100vw">
-              <img src="assets/img/s/spread-marble-800.webp" alt="A table of Al Mankal chicken tikka, kebab skewers, puri bread, hummus and garlic dip, seen from above" data-t-alt="hero_alt" width="1080" height="999" fetchpriority="high">
-            </picture>
+          <!-- The mankal: the brazier the restaurant is named after. Real coals cut from the grill film, a volumetric fire film screen-blended over them (assets/video/flame), live sparks, and the name written in ember above. -->
+          <div class="mankal" id="hero-mankal" aria-hidden="true">
+            <div class="sky"></div>
+            <div class="word"><svg viewBox="0 0 360 150" focusable="false"><defs><linearGradient id="emberfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3a0"/><stop offset=".55" stop-color="#ffb347"/><stop offset="1" stop-color="#ff6a1a"/></linearGradient></defs><text x="180" y="112" text-anchor="middle">المنقل</text></svg><small>Al Mankal · Amman · 1985</small></div>
+            <div class="legs"><i></i><i></i></div>
+            <div class="body"></div>
+            <div class="rim"></div>
+            <div class="bed"><img src="assets/img/s/bed-2.webp" alt="" width="720" height="150" class="f1" fetchpriority="high"><img src="assets/img/s/bed-1.webp" alt="" width="720" height="150" class="f2" decoding="async"><img src="assets/img/s/bed-3.webp" alt="" width="720" height="150" class="f3" decoding="async"></div>
+            <video class="flame" id="mankal-flame" muted loop playsinline preload="none" poster="assets/img/s/flame-still.webp" width="576" height="640"></video>
+            <div class="rim lip"></div>
+            <canvas class="sparks" id="mankal-sparks"></canvas>
           </div>
         </div>
         <div class="hero-text">
