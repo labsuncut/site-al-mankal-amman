@@ -683,16 +683,18 @@
   const light = () => { body.classList.add('lit'); wakeMankal(); if (page === 'home') setTimeout(emberToCall, 3450); };
   if (intro && !session.get('mankal-intro')) {
     body.classList.add('intro-wait');
-    const drop = $('.intro-drop', intro), impact = $('.intro-impact', intro), bed = $('#intro-bed', intro), hole = $('.hole', bed), hot = $('.hot', bed), logo = $('.intro-logo', intro);
-    const timers = []; let done = false, fire = null, sparks = null; const phoneW = innerWidth < 700;
+    const impact = $('.intro-impact', intro), bed = $('#intro-bed', intro), hole = $('.hole', bed), hot = $('.hot', bed), logo = $('.intro-logo', intro), film = $('#intro-flame', intro);
+    const timers = []; let done = false, sparks = null; const phoneW = innerWidth < 700;
+    // The fire film starts loading at once (the intro is the first thing on screen); on a slow line the ignition still happens with the coals, glow and sparks, and the film fades in the moment it can play.
+    if (film) film.src = film.canPlayType('video/mp4; codecs="avc1.4d401e"') ? (phoneW ? 'assets/video/flame-sm.mp4' : 'assets/video/flame.mp4') : 'assets/video/flame.webm';
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
     const finish = () => {
-      if (done) return; done = true; timers.forEach(clearTimeout); if (fire) fire.stop(); if (sparks) sparks.stop();
+      if (done) return; done = true; timers.forEach(clearTimeout); if (sparks) sparks.stop();
       intro.classList.add('lift'); body.classList.remove('intro-wait'); light(); session.set('mankal-intro', '1');
-      setTimeout(() => intro.classList.add('gone'), reduce ? 400 : 800);
+      setTimeout(() => { intro.classList.add('gone'); if (film) { film.pause(); film.removeAttribute('src'); film.load(); } }, reduce ? 400 : 1000);
     };
     $('[data-skip-intro]', intro).addEventListener('click', finish);
-    // The ember lands in the middle of the bed. The hot coals show through a round window that grows from that point while they shrink by the same amount, so they stay still and only the window moves.
+    // The coals catch from the ember: the hot bed shows through a round window that grows from that point while the coals shrink by the same amount, so they stay still and only the window moves.
     const reveal = (ms) => {
       const t0 = performance.now();
       const run = (now) => { const u = Math.min(1, (now - t0) / ms), s = .02 + .98 * (1 - Math.pow(1 - u, 3)); hole.style.transform = `translate(-50%, -50%) scale(${s})`; hot.style.transform = `scale(${1 / s})`; if (u < 1 && !done) requestAnimationFrame(run); };
@@ -700,13 +702,15 @@
     };
     const go = () => {
       const b = bed.getBoundingClientRect(), px = b.left + b.width / 2, py = b.top + b.height * .55;
-      drop.style.setProperty('--h', (py + 12) + 'px'); impact.style.setProperty('--ty', py + 'px');
-      if (reduce) { hole.style.transform = 'translate(-50%, -50%) scale(1)'; hot.style.transform = 'none'; intro.classList.add('wake', 'burn', 'show-logo'); at(900, finish); return; }
-      drop.classList.add('go');
-      at(640, () => { intro.classList.add('wake', 'burn'); reveal(1300); const lr = logo.getBoundingClientRect(); fire = fireGL($('#intro-fire', intro), px, py, lr.top, lr.height); if (fire) { sparks = flame($('#intro-sparks', intro), px, py, lr.top, true); sparks.start(); } else fire = flame($('#intro-sparks', intro), px, py, lr.top); fire.start(); });
-      at(1000, () => { intro.classList.add('show-logo'); if (fire) fire.burst(phoneW ? 70 : 110); if (sparks) sparks.burst(phoneW ? 14 : 22); });
-      at(2700, () => { if (fire) fire.settle(.7); });
-      at(3600, finish);
+      impact.style.setProperty('--ty', py + 'px');
+      if (reduce) { hole.style.transform = 'translate(-50%, -50%) scale(1)'; hot.style.transform = 'none'; intro.classList.add('wake', 'show-logo'); at(900, finish); return; }
+      // Anticipation (0 to 0.5 s): one ember wakes in the dark and breathes. Ignition (0.5 s): the coals catch from it, the glow rises, the fire film and the sparks start.
+      at(120, () => intro.classList.add('ember'));
+      at(520, () => { intro.classList.add('wake', 'burn'); reveal(1100); if (film) { const p = film.play(); if (p && p.catch) p.catch(() => {}); } sparks = flame($('#intro-sparks', intro), px, py, py - innerHeight * .5, true); sparks.start(); });
+      // Brand (1.0 s): the halo rises from the fire and the emblem comes into its light. Hold (1.9 s): one slow pulse of warmth. Opening (2.7 s): the scene brightens into the page.
+      at(1000, () => { intro.classList.add('show-logo'); if (sparks) sparks.burst(phoneW ? 10 : 16); });
+      at(1900, () => intro.classList.add('hold'));
+      at(2700, finish);
     };
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));
   } else {

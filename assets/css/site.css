@@ -92,7 +92,7 @@ html[lang="ar"] .note { font-size: .92rem; }
 body.no-js .ap, body.no-io .ap { opacity: 1; transform: none; }
 
 /* ---------- the entry ---------- */
-.intro { position: fixed; inset: 0; z-index: 80; background: var(--char); overflow: hidden; will-change: transform; --bedw: min(max(150vw, 100%), 1040px); --bedh: calc(var(--bedw) / 4.8); --logo: min(56vw, 300px); }
+.intro { position: fixed; inset: 0; z-index: 80; background: var(--char); overflow: hidden; will-change: transform; --bedw: min(max(150vw, 100%), 1040px); --bedh: calc(var(--bedw) / 4.8); --logo: min(54vw, 290px); }
 .intro::before { content: ''; position: absolute; inset: auto 0 -30%; height: 80%; background: radial-gradient(50% 60% at 50% 100%, rgba(255, 122, 26, .4), rgba(200, 16, 46, .14) 45%, transparent 72%); opacity: 0; transition: opacity 1200ms var(--ease); }
 .intro.burn::before { opacity: 1; }
 .intro-stage { position: absolute; inset: 0; transition: transform 700ms var(--ease), opacity 500ms var(--ease); }
@@ -110,23 +110,32 @@ body.no-js .ap, body.no-io .ap { opacity: 1; transform: none; }
 .intro-bed .glow { position: absolute; left: -10%; right: -10%; top: -110%; bottom: -20%; background: radial-gradient(50% 55% at 50% 72%, rgba(255, 138, 42, .6), rgba(200, 16, 46, .22) 46%, transparent 72%); opacity: 0; }
 .intro.wake .intro-bed .glow { animation: glow-up 1300ms 150ms var(--ease) forwards, breathe 2.4s 1500ms ease-in-out infinite alternate; }
 @keyframes glow-up { to { opacity: 1; } }
-.intro-impact { position: fixed; left: 50%; top: var(--ty, 50%); width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: radial-gradient(circle, #fff6d0, #ff8a2a 38%, transparent 70%); opacity: 0; transform: scale(.2); }
-.intro.wake .intro-impact { animation: impact 520ms ease-out forwards; }
-@keyframes impact { 0% { opacity: 1; transform: scale(.2); } 100% { opacity: 0; transform: scale(2.8); } }
-.intro-drop { position: fixed; top: -14px; left: 50%; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 12px 4px rgba(255, 138, 42, .7); opacity: 0; }
-.intro-drop.go { animation: drop 640ms cubic-bezier(.5, 0, .9, .6) forwards; }
-.intro.wake .intro-drop { opacity: 0; animation: none; }
-@keyframes drop { from { opacity: 1; transform: translateY(0); } to { opacity: 1; transform: translateY(var(--h, 50vh)); } }
-/* The logo rises out of the flame (the fire canvas sits behind it): it comes up from the bed to the centre of the screen with a little overshoot. */
-.intro-logo { position: absolute; left: 50%; top: 50%; width: var(--logo); margin: calc(var(--logo) / -2) 0 0 calc(var(--logo) / -2); opacity: 0; transform: translateY(26vh) scale(.72); transition: opacity 300ms var(--ease), transform 1100ms cubic-bezier(.2, 1.2, .3, 1); }
+/* Anticipation: one ember wakes in the dark bed and breathes twice before the coals around it catch. */
+.intro-impact { position: fixed; left: 50%; top: var(--ty, 50%); width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: radial-gradient(circle, #fff1c0, #ff8a2a 40%, rgba(200, 16, 46, .5) 62%, transparent 72%); opacity: 0; transform: scale(.3); }
+.intro.ember .intro-impact { animation: ember-wake 520ms ease-out forwards, ember-breathe 900ms 520ms ease-in-out infinite alternate; }
+.intro.burn .intro-impact { animation: ember-out 700ms ease-out forwards; }
+@keyframes ember-wake { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: scale(1); } }
+@keyframes ember-breathe { from { opacity: .75; transform: scale(.9); } to { opacity: 1; transform: scale(1.25); } }
+@keyframes ember-out { from { opacity: 1; transform: scale(1.2); } to { opacity: 0; transform: scale(3); } }
+/* Ignition: the same fire film as the hero, screen-blended over the dark, masked to a soft oval so it has no edges; it rises from the bed behind the emblem. */
+.intro-flame { position: absolute; left: 50%; bottom: calc(var(--bedh) * .42); width: min(86vw, 560px); height: min(64vh, 600px); transform: translateX(-50%); object-fit: cover; object-position: 50% 100%; mix-blend-mode: screen; opacity: 0; transition: opacity 900ms var(--ease); -webkit-mask-image: radial-gradient(ellipse 50% 90% at 50% 100%, #000 40%, transparent 100%); mask-image: radial-gradient(ellipse 50% 90% at 50% 100%, #000 40%, transparent 100%); pointer-events: none; }
+.intro.burn .intro-flame { opacity: .92; }
+/* Brand emergence: the emblem is already in place, unlit; a warm halo rises behind it from the fire and the emblem comes into the light, with a slow settle rather than a jump. */
+.intro-halo { position: absolute; left: 50%; top: 46%; width: calc(var(--logo) * 2.2); aspect-ratio: 1; margin: calc(var(--logo) * -1.1) 0 0 calc(var(--logo) * -1.1); border-radius: 50%; background: radial-gradient(circle, rgba(255, 170, 70, .5), rgba(255, 122, 26, .22) 38%, rgba(200, 16, 46, .08) 60%, transparent 72%); opacity: 0; transform: translateY(12vh) scale(.6); transition: opacity 1100ms var(--ease), transform 1500ms cubic-bezier(.2, .8, .2, 1); }
+.intro.show-logo .intro-halo { opacity: 1; transform: none; }
+.intro.hold .intro-halo { animation: halo-pulse 1100ms ease-in-out; }
+@keyframes halo-pulse { 50% { transform: scale(1.08); opacity: 1; } }
+.intro-logo { position: absolute; left: 50%; top: 46%; width: var(--logo); margin: calc(var(--logo) / -2) 0 0 calc(var(--logo) / -2); opacity: 0; transform: translateY(2.5vh) scale(.94); transition: opacity 1000ms cubic-bezier(.3, 0, .2, 1), transform 1500ms cubic-bezier(.2, .8, .2, 1); }
 .intro.show-logo .intro-logo { opacity: 1; transform: none; }
 .intro-logo img { width: 100%; height: auto; display: block; }
 .intro-fire { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 84%; pointer-events: none; }
 .intro-skip { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); inset-inline-end: 18px; background: transparent; border: 1px solid rgba(255, 255, 255, .35); color: rgba(255, 255, 255, .85); border-radius: 999px; padding: 8px 14px; font: 600 .82rem var(--text); cursor: pointer; opacity: 0; transition: opacity 400ms var(--ease) 500ms; }
 .intro.burn .intro-skip { opacity: 1; }
 .intro-skip:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
-.intro.lift { transform: translateY(-102%); transition: transform 760ms cubic-bezier(.76, 0, .24, 1); pointer-events: none; }
-.intro.lift .intro-stage { transform: translateY(-40px) scale(1.04); opacity: 0; }
+/* The opening: the whole scene brightens into the page (no cut, no slide), the emblem and the fire growing slightly as they dissolve into the hero's own charcoal. */
+.intro.lift { opacity: 0; transition: opacity 900ms cubic-bezier(.4, 0, .2, 1); pointer-events: none; }
+.intro.lift .intro-stage { transform: scale(1.05); transition: transform 1100ms cubic-bezier(.2, .6, .2, 1); }
+.intro.lift .intro-flame { opacity: 0; transition-duration: 500ms; }
 .intro.gone { display: none; }
 body.intro-wait { overflow: hidden; }
 

@@ -39,14 +39,17 @@
 <body data-page="home">
   <!-- The entry: an ember falls onto the cold bed, the coals catch where it lands (the restaurant's own coals, cut from its grill film), a flame climbs and the logo rises out of it, the curtain lifts. Once per tab; Skip in the corner. -->
   <div class="intro" id="intro">
+    <!-- Born from the coals: darkness, one ember in the bed, the coals catch from it, the fire film rises (the same fire as the hero), the emblem is lit by it, holds, and the whole scene opens into the page. -->
     <div class="intro-stage" aria-hidden="true">
-      <i class="intro-drop"></i><i class="intro-impact"></i>
+      <i class="intro-impact"></i>
       <div class="intro-bed" id="intro-bed">
         <img src="assets/img/s/bed-cold.webp" alt="" width="720" height="150" decoding="sync" fetchpriority="high">
         <div class="hole"><div class="hot"><img src="assets/img/s/bed-2.webp" alt="" width="720" height="150" decoding="sync" fetchpriority="high"><img src="assets/img/s/bed-1.webp" alt="" width="720" height="150"><img src="assets/img/s/bed-3.webp" alt="" width="720" height="150"></div></div>
         <span class="glow"></span>
       </div>
-      <canvas class="intro-fire" id="intro-fire"></canvas><canvas class="intro-fire" id="intro-sparks"></canvas>
+      <video class="intro-flame" id="intro-flame" muted loop playsinline preload="auto" poster="assets/img/s/flame-still.webp" width="576" height="640"></video>
+      <canvas class="intro-fire" id="intro-sparks"></canvas>
+      <i class="intro-halo"></i>
       <div class="intro-logo"><img src="assets/img/s/logo-760.webp" alt="" width="760" height="760" decoding="sync" fetchpriority="high"></div>
     </div>
     <button class="intro-skip" type="button" data-skip-intro data-t="skip_intro">Skip</button>
