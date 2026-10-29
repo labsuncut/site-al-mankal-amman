@@ -58,7 +58,7 @@
   function media(item, eager) {
     const p = photoOf(item);
     if (!p) return noPhoto();
-    const chip = item.spicy ? `<span class="chip">${t('mn_spicy')}</span>` : '';
+    const chip = item.spicy ? `<span class="chip chip-hot" role="img" aria-label="${t('mn_spicy')}" title="${t('mn_spicy')}"><svg viewBox="0 0 24 24" ><path d="M12.2 5.9c.2-1.9 1.4-3.3 3.3-3.9.6-.2 1.1.5.7 1-1 1.1-1.5 2-1.7 3.1" fill="none" stroke="#3b8f3b" stroke-width="1.9" stroke-linecap="round"/><path d="M14.3 5.6c-2.5 3.6-3.4 8.5-7.4 11.2-1.8 1.2-3.9 1.6-5.7 1.3-.6-.1-.9.6-.4 1 2.6 2.1 6.4 2.6 9.8 1.2 4.3-1.8 7.3-6 7.6-10.7.1-1.8-.4-3.3-1.4-4.3-.8-.8-2-.6-2.5.3Z" fill="#d7262d"/><path d="M15.8 7.3c-.5 3.4-2.6 6.9-6 9.1" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.2" stroke-linecap="round"/></svg></span>` : '';
     if (p.own) return `<div class="card-ph">${picture(p.own, '(min-width: 1100px) 280px, (min-width: 700px) 31vw, 46vw', eager)}${chip}</div>`;
     return `<div class="card-ph"><img class="store" src="${esc(p.store)}" alt="" width="640" height="640" loading="lazy" decoding="async">${chip}</div>`;
   }
@@ -324,7 +324,7 @@
 
   // ---------- which branch? ----------
   const sheet = $('#sheet'); let sheetFocus = null;
-  function openSheet() { sheetFocus = document.activeElement; sheet.hidden = false; body.classList.add('modal-open'); requestAnimationFrame(() => { sheet.classList.add('open'); $('.sb .btn', sheet).focus(); }); }
+  function openSheet() { sheetFocus = document.activeElement; sheet.hidden = false; body.classList.add('modal-open'); requestAnimationFrame(() => { sheet.classList.add('open'); $('.sheet-call', sheet).focus(); }); }
   function closeSheet() { if (sheet.hidden) return; sheet.classList.remove('open'); body.classList.remove('modal-open'); setTimeout(() => { sheet.hidden = true; }, reduce ? 0 : 300); if (sheetFocus && sheetFocus.focus) sheetFocus.focus(); }
   document.addEventListener('click', (e) => { if (e.target.closest('[data-call]')) openSheet(); else if (e.target.closest('[data-close-sheet]')) closeSheet(); });
   sheet.addEventListener('keydown', (e) => trap(e, sheet));
@@ -405,6 +405,40 @@
   // A heading marked data-split gets each word in its own span, so they can rise one after another.
   function split(el) { el.innerHTML = el.textContent.split(' ').map((w, i) => `<span class="w ap" style="transition-delay:${i * 90}ms">${esc(w)}</span>`).join(' '); }
 
+  // ---------- the hero's fire: the word COALS lit from below, the fire line, the ember that lands on Call ----------
+  function litHero() {
+    const h = $('#hero-title'); if (!h) return;
+    const txt = t('hero_title'), word = lang === 'ar' ? 'الفحم' : 'coals';
+    const i = txt.toLowerCase().indexOf(word);
+    if (i < 0) { h.textContent = txt; h.removeAttribute('aria-label'); return; }
+    const w = txt.slice(i, i + word.length);
+    const letters = lang === 'ar' ? `<i data-ch="${esc(w)}" style="--i:0">${esc(w)}</i>` : [...w].map((ch, k) => `<i data-ch="${esc(ch)}" style="--i:${k}">${esc(ch)}</i>`).join('');
+    const sparks = ['14%|0s', '40%|.8s', '63%|1.4s', '86%|.4s'].map((s) => { const [x, d] = s.split('|'); return `<b class="sp" style="--x:${x};--d:${d}"></b>`; }).join('');
+    h.innerHTML = `${esc(txt.slice(0, i))}<span class="lit">${letters}${sparks}</span>${esc(txt.slice(i + word.length))}`;
+    h.setAttribute('aria-label', txt);
+  }
+  function sizeLine() {
+    const line = $('.fireline'); if (!line) return;
+    const w = Math.max(0, line.querySelector('.bed').offsetWidth - 14);
+    line.style.setProperty('--w', (lang === 'ar' ? -w : w) + 'px');
+  }
+  addEventListener('resize', sizeLine);
+  function emberToCall() {
+    const line = $('.fireline'), fly = $('#ember-fly'), call = $('.order-go [data-call]'), host = $('.hero-text');
+    if (!line || !fly || !call || !host || reduce || !fly.animate) return;
+    const hr = host.getBoundingClientRect(), tr = line.querySelector('.tip').getBoundingClientRect(), cr = call.getBoundingClientRect();
+    if (cr.bottom < 0 || tr.top > innerHeight) return;
+    const x0 = tr.left - hr.left + tr.width / 2 - 5, y0 = tr.top - hr.top + tr.height / 2 - 5;
+    const x1 = cr.left - hr.left + cr.width / 2 - 5, y1 = cr.top - hr.top + cr.height / 2 - 5;
+    const bend = lang === 'ar' ? -36 : 36;
+    const a = fly.animate([
+      { transform: `translate(${x0}px, ${y0}px) scale(1)`, opacity: 1 },
+      { transform: `translate(${(x0 + x1) / 2 + bend}px, ${(y0 + y1) / 2 - 10}px) scale(1.4)`, opacity: 1, offset: .55 },
+      { transform: `translate(${x1}px, ${y1}px) scale(.3)`, opacity: 0 },
+    ], { duration: 950, easing: 'cubic-bezier(.45, 0, .55, 1)' });
+    a.onfinish = () => { call.classList.add('ring'); setTimeout(() => call.classList.remove('ring'), 1400); };
+  }
+
   // ---------- language ----------
   function applyLang() {
     T = TEXT[lang];
@@ -418,6 +452,7 @@
     $$('[data-split]').forEach((el) => { split(el); watch(el); });
     const titles = { home: 'title_home', menu: 'title_menu', branches: 'title_branches', franchise: 'title_franchise' };
     if (titles[page]) document.title = t(titles[page]);
+    litHero(); sizeLine();
     renderRail(); renderGrid(false); renderMenuPage(false); renderAgain(); renderBasket(); renderHours(); renderReels(); syncChoices();
   }
   $('#lang').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
@@ -495,16 +530,31 @@
     }
   }
 
-  // ---------- the entry: the logo burns in once per tab, then the curtain lifts and the page assembles (body.lit) ----------
+  // ---------- the entry, once per tab: an ember falls, 1985 runs forward to today, "Still on the coals", the logo burns in, the curtain lifts. Skip in the corner. ----------
   const intro = $('#intro');
-  const light = () => body.classList.add('lit');
+  const light = () => { body.classList.add('lit'); if (page === 'home') setTimeout(emberToCall, 3450); };
   if (intro && !session.get('mankal-intro')) {
     body.classList.add('intro-wait');
-    const hold = reduce ? 880 : 1780, gone = reduce ? 500 : 800;
+    const numEl = $('#intro-num'), drop = $('.intro-drop', intro), thisYear = new Date().getFullYear();
+    const digits = (s) => (lang === 'ar' ? s.replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[d]) : s);
+    numEl.textContent = digits('1985');
+    const timers = []; let done = false;
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+    const finish = () => {
+      if (done) return; done = true; timers.forEach(clearTimeout);
+      intro.classList.add('lift'); body.classList.remove('intro-wait'); light(); session.set('mankal-intro', '1');
+      setTimeout(() => intro.classList.add('gone'), reduce ? 400 : 800);
+    };
+    $('[data-skip-intro]', intro).addEventListener('click', finish);
     const go = () => {
-      intro.classList.add('burn');
-      setTimeout(() => { intro.classList.add('lift'); body.classList.remove('intro-wait'); light(); session.set('mankal-intro', '1'); }, hold);
-      setTimeout(() => intro.classList.add('gone'), hold + gone);
+      if (reduce) { numEl.textContent = digits(String(thisYear)); intro.classList.add('burn', 'show-num', 'show-word', 'show-logo'); at(900, finish); return; }
+      drop.classList.add('go');
+      at(600, () => intro.classList.add('burn', 'show-num'));
+      at(1250, () => { const t0 = performance.now(); const run = (now) => { const u = Math.min(1, (now - t0) / 850), e = 1 - Math.pow(1 - u, 3); numEl.textContent = digits(String(Math.round(1985 + (thisYear - 1985) * e))); if (u < 1 && !done) requestAnimationFrame(run); }; requestAnimationFrame(run); });
+      at(2150, () => intro.classList.add('show-word'));
+      at(2950, () => intro.classList.add('words-out'));
+      at(3200, () => intro.classList.add('show-logo'));
+      at(4250, finish);
     };
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));
   } else {

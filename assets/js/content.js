@@ -72,7 +72,7 @@ const TEXT = {
     skip: 'Skip to the menu', skip_main: 'Skip to content',
     brand: 'Al Mankal', brand_sub: 'Chicken tikka · Amman',
     nav_menu: 'Menu', nav_branches: 'Branches', nav_franchise: 'Franchising', nav_story: 'Story', nav_basket: 'Basket',
-    intro_line: 'On the coals since 1985',
+    intro_still: 'Still on the coals', skip_intro: 'Skip', still_on: 'still on',
 
     hero_eyebrow: 'Gardens · Sweifieh · Amman',
     hero_title: 'On the coals since 1985',
@@ -89,7 +89,7 @@ const TEXT = {
     photo_note: "Photos are Al Mankal's own. Dishes without one yet show the logo.",
     nophoto: 'Photo coming soon',
     add_btn: 'Add to basket', jd: 'JD', qty: 'Quantity', less: 'One less', more: 'One more',
-    mn_spicy: 'Spicy option', mn_off: 'Not available now',
+    mn_spicy: 'Can be made spicy', mn_legend: 'can be made spicy, just ask.', mn_off: 'Not available now',
     again_title: 'Order again', again_p: 'Your last basket on this phone: {n} · {t} JD',
     again_btn: 'Add it all to my basket', again_hide: 'Not now', again_done: 'Added to your basket',
 
@@ -118,7 +118,7 @@ const TEXT = {
     fr_lead: 'Al Mankal is looking for partners who want to bring charcoal tikka to their own corner of the map.',
     fr_cta: 'Talk to us about a franchise',
 
-    sheet_title: 'Which branch?', sheet_lead: 'Both branches answer on the same number.', close: 'Close',
+    sheet_title: 'Call Al Mankal', sheet_lead: 'One number for both branches. Say which branch when they answer.', close: 'Close', one_number: 'One number for both branches', ft_one: '· both branches',
     bk_title: 'Your basket', bk_empty: 'Your basket is empty.', bk_empty_p: 'Add a dish from the menu and it will wait for you here.',
     bk_browse: 'See the menu', bk_total: 'Total', bk_branch: 'Ordering from', bk_checkout: 'Checkout', bk_clear: 'Empty the basket',
     bk_note: 'Delivery or pickup. Cash on delivery.', bk_items: '{n} items', bk_item: '1 item',
@@ -139,7 +139,7 @@ const TEXT = {
     mn_top: 'Back to top',
 
     bp_eyebrow: 'Branches', bp_title: 'Find your grill',
-    bp_lead: 'Two branches in Amman, both on charcoal, one phone number.',
+    bp_lead: 'Two branches in Amman, both on charcoal.',
     bp_map: 'Open in Google Maps', bp_delivery: 'Delivery and pickup', bp_cash: 'Cash on delivery',
     bp_map_title: 'Map of the {b} branch',
 
@@ -164,7 +164,7 @@ const TEXT = {
     skip: 'روح للقائمة', skip_main: 'روح للمحتوى',
     brand: 'المنقل', brand_sub: 'تشكن تكا · عمّان',
     nav_menu: 'القائمة', nav_branches: 'الفروع', nav_franchise: 'الامتياز', nav_story: 'القصة', nav_basket: 'السلة',
-    intro_line: 'على الفحم من سنة ١٩٨٥',
+    intro_still: 'لسا على الفحم', skip_intro: 'تخطّي', still_on: 'لليوم',
 
     hero_eyebrow: 'الجاردنز · الصويفية · عمّان',
     hero_title: 'على الفحم من سنة ١٩٨٥',
@@ -181,7 +181,7 @@ const TEXT = {
     photo_note: 'الصور من المنقل نفسه. الأطباق اللي لسا ما إلها صورة بيظهر مكانها الشعار.',
     nophoto: 'الصورة قريباً',
     add_btn: 'ضيف على السلة', jd: 'د.أ', qty: 'الكمية', less: 'أقل بواحد', more: 'أكثر بواحد',
-    mn_spicy: 'خيار حار', mn_off: 'غير متوفر حالياً',
+    mn_spicy: 'بتقدر تطلبها حارّة', mn_legend: 'بتقدر تطلبها حارّة، بس اطلب.', mn_off: 'غير متوفر حالياً',
     again_title: 'اطلب مرة ثانية', again_p: 'آخر سلة على هاد الجهاز: {n} · {t} د.أ',
     again_btn: 'ضيفها كلها على سلتي', again_hide: 'مش هلأ', again_done: 'انضافت على سلتك',
 
@@ -210,7 +210,7 @@ const TEXT = {
     fr_lead: 'المنقل بدور على شركاء بدهم يوصّلوا تكا الفحم لزاويتهم على الخريطة.',
     fr_cta: 'احكي معنا عن الامتياز',
 
-    sheet_title: 'أي فرع؟', sheet_lead: 'الفرعين بيردّوا على نفس الرقم.', close: 'إغلاق',
+    sheet_title: 'اتصل بالمنقل', sheet_lead: 'رقم واحد للفرعين. قول لهم أي فرع لما يردّوا.', close: 'إغلاق', one_number: 'رقم واحد للفرعين', ft_one: '· للفرعين',
     bk_title: 'سلتك', bk_empty: 'سلتك فاضية.', bk_empty_p: 'ضيف طبق من القائمة وبيستناك هون.',
     bk_browse: 'شوف القائمة', bk_total: 'المجموع', bk_branch: 'الطلب من', bk_checkout: 'إتمام الطلب', bk_clear: 'فضّي السلة',
     bk_note: 'توصيل أو استلام. الدفع كاش عند الاستلام.', bk_items: '{n} أصناف', bk_item: 'صنف واحد',
@@ -231,7 +231,7 @@ const TEXT = {
     mn_top: 'لفوق',
 
     bp_eyebrow: 'الفروع', bp_title: 'لاقي منقلك',
-    bp_lead: 'فرعين في عمّان، الاثنين على الفحم، ورقم واحد.',
+    bp_lead: 'فرعين في عمّان، الاثنين على الفحم.',
     bp_map: 'افتح في خرائط جوجل', bp_delivery: 'توصيل واستلام', bp_cash: 'الدفع عند الاستلام',
     bp_map_title: 'خريطة فرع {b}',
 
