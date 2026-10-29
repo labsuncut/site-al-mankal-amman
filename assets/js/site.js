@@ -44,6 +44,8 @@
   const byId = {}; MENU.forEach((c) => c.items.forEach((i) => { byId[i.id] = i; }));
   const catById = {}; MENU.forEach((c) => c.items.forEach((i) => { catById[i.id] = catById[i.id] || c.key; })); const catOf = (id) => catById[id];
   // Ids on the restaurant's store used by the basket's 'goes well with it' row (menu-data.js).
+  // Upsell lists (ids on the restaurant's store). meal: sandwich → the store's own 2-sandwich meal with fries, pickles and a cola.
+  const UP = { meal: { 34818926: 34818931, 34818927: 34818930, 34818928: 34818929, 34815875: 34815879, 23508397: 34818932, 31892686: 34818932 }, dips: [23359396, 23359397, 23359398, 34802919, 27243904], sandwiches: [34818926, 34818928, 34818927, 23508397], mains: [23359335, 23359348, 23359350], fattoush: 23359384 };
   const PAIR = { dip: '23359396', bread: '23359364', drink: '32509051', shan: '23359402', salad: '23359392', fries: '23359377', main: '23359335' };
   const SIG = SIGNATURE.map((id) => byId[id]).filter(Boolean);
   const TABS = [{ key: 'sig', items: SIG }].concat(MENU.map((c) => ({ key: c.key, cat: c, items: c.items })));
@@ -308,27 +310,28 @@
         <div class="thumb">${p && p.own ? `<img src="assets/img/s/${p.own}-480.webp" alt="" loading="lazy">` : p && p.store ? `<img src="${esc(p.store)}" alt="" loading="lazy">` : ''}</div>
         <div><p class="name">${esc(it[lang])}</p><span class="each">${num(it.price)} ${t('jd')}</span></div>
         <span data-ctl="${id}">${controlHtml(id)}</span></div>`; }).join('');
-    // Goes well with it: up to three small things the basket is missing, from the restaurant's own menu. Meals already include their cola, dip and bread (their descriptions say so), so those are not offered twice.
+    // Complete your sufra: what a good waiter would ask, in the order that works. Everything is the restaurant's own menu at its own prices; nothing is invented.
+    // 1. "Make it a meal": the store's own 2-sandwich meals, shown as the price difference (anchoring: +2.70 reads small next to 5.00).
+    // 2. Sauces and dips at 0.50: tiny, many people take two. 3. Another sandwich, or a sandwich for someone else, or the chicken when only sides are in. 4. Cold and fresh: drink, salad, bread, fries the order lacks.
     const have = (test) => ids.some((id) => test(byId[id], catOf(id)));
     const said = (word) => have((it) => new RegExp(word, 'i').test(it.den || ''));
     const inCat = (k) => have((it, c) => c === k);
     const hasMain = inCat('collection-1460895') || inCat('collection-9877883') || inCat('chicken-meals') || inCat('sandwiches') || inCat('main-dishes');
-    const picks = [];
-    const offer = (id, why) => { if (!basket[id] && byId[id] && picks.length < 3 && !picks.some((p) => p.id === id)) picks.push({ id, why }); };
-    if (hasMain) {
-      if (!inCat('dips') && !said('garlic|sumac|مثومة')) offer(PAIR.dip, 'pair_dip');
-      if (!said('bread|puri|pouri|bouri|بوري|خبز') && !inCat('sandwiches')) offer(PAIR.bread, 'pair_bread');
-      if (!inCat('beverages') && !said('cola|كولا')) offer(PAIR.drink, 'pair_drink');
-      if (!inCat('cold-appetizers') && !said('hummus|salad|حمص|سلطة')) offer(PAIR.salad, 'pair_salad');
-      if (!said('fries|بطاطا')) offer(PAIR.fries, 'pair_fries');
-      offer(PAIR.shan, 'pair_shan');
-    } else offer(PAIR.main, 'pair_main');
-    const pairHtml = picks.length ? `<section class="bk-pair" aria-labelledby="bk-pair-t"><h3 id="bk-pair-t">${t('bk_pair')}</h3>${picks.map(({ id, why }) => { const it = byId[id], p = photoOf(it); return `<div class="bk-pick">
+    const groups = [], used = new Set();
+    const group = (title, list, delta) => { const items = list.filter((id) => id && byId[id] && !basket[id] && !used.has(String(id))).slice(0, 4); if (!items.length) return; items.forEach((id) => used.add(String(id))); groups.push({ title, items, delta }); };
+    if (inCat('sandwiches')) group('up_meal', ids.map((id) => UP.meal[id]).filter((m) => m && !ids.includes(String(m))), (m) => { const from = ids.find((id) => UP.meal[id] === m); return from ? byId[m].price - byId[from].price : 0; });
+    if (hasMain) group('up_dips', UP.dips);
+    if (inCat('sandwiches')) group('up_sand', UP.sandwiches);
+    else if (hasMain) group('up_sand2', UP.sandwiches.slice(0, 2));
+    else group('pair_main', UP.mains);
+    if (hasMain) group('up_cold', [].concat(!inCat('beverages') && !said('cola|كولا') ? [PAIR.drink, PAIR.shan] : [], !inCat('cold-appetizers') && !said('hummus|salad|حمص|سلطة') ? [PAIR.salad, UP.fattoush] : [], !said('bread|puri|pouri|bouri|بوري|خبز') && !inCat('sandwiches') ? [PAIR.bread] : [], !said('fries|بطاطا') ? [PAIR.fries] : []));
+    const card = (id, delta) => { const it = byId[id], p = photoOf(it), price = delta ? `+${num(delta)}` : num(it.price); return `<div class="up-card">
         <div class="thumb">${p && p.own ? `<img src="assets/img/s/${p.own}-480.webp" alt="" loading="lazy">` : p && p.store ? `<img src="${esc(p.store)}" alt="" loading="lazy">` : ''}</div>
-        <div><p class="name">${esc(it[lang])}</p><span class="each">${esc(t(why))} · ${num(it.price)} ${t('jd')}</span></div>
-        <button class="btn btn-line" type="button" data-pair="${id}" aria-label="${esc(t('add_short'))} ${esc(it[lang])}">${t('add_short')}</button></div>`; }).join('')}</section>` : '';
-    bodyEl.insertAdjacentHTML('beforeend', pairHtml);
-    $$('[data-pair]', bodyEl).forEach((b) => b.addEventListener('click', () => { const id = b.dataset.pair; setQty(id, 1); bump(); renderBasket(); const n = $('[data-pair]', bodyEl) || $('#bk-go'); if (n) n.focus(); }));
+        <p class="name">${esc(it[lang])}</p><span class="each">${price} ${t('jd')}</span>
+        <button class="add-s" type="button" data-pair="${id}" aria-label="${esc(t('add_short'))} ${esc(it[lang])}">${plus}</button></div>`; };
+    const upHtml = groups.length ? `<section class="up" aria-labelledby="up-t"><h3 id="up-t">${t('up_title')}</h3>${groups.map((g) => `<div class="up-group"><p class="up-h">${t(g.title)}</p><div class="up-row">${g.items.map((id) => card(id, g.delta ? g.delta(id) : 0)).join('')}</div></div>`).join('')}</section>` : '';
+    bodyEl.insertAdjacentHTML('beforeend', upHtml);
+    $$('[data-pair]', bodyEl).forEach((b) => b.addEventListener('click', () => { const id = b.dataset.pair; setQty(id, (basket[id] || 0) + 1); bump(); renderBasket(); const n = $('[data-pair]', bodyEl) || $('#bk-go'); if (n) n.focus(); }));
     foot.innerHTML = `<div class="bk-total"><span>${t('bk_total')}</span><span class="price">${num(total())}<small>${t('jd')}</small></span></div><button class="btn btn-red" type="button" id="bk-go">${t('bk_checkout')}</button><button class="bk-clear" type="button" id="bk-clear">${t('bk_clear')}</button><p class="note">${t('bk_note')}</p>`;
     $('#bk-go').addEventListener('click', () => { handover = true; renderBasket(); $('#ho-go').focus(); });
     $('#bk-clear').addEventListener('click', () => { Object.keys(basket).forEach((id) => { delete basket[id]; syncControls(id); }); saveBasket(); renderBasket(); });
@@ -554,10 +557,76 @@
     }
   }
 
+  // ---------- the flame as light, not particles: a WebGL shader draws layered, upward-scrolling noise (fractal, domain-warped) through a flame-shaped mask and a colour ramp from deep red to white. ----------
+  // It reads like filmed fire because every pixel is continuous, the tongues tear and rejoin, and the brightness ramps like a real flame. Height and width come in from the page, so it reaches past the logo on any screen.
+  function fireGL(canvas, ox, oy, topY, logoH) {
+    const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false });
+    if (!gl) return null;
+    const dpr = 1, cb = canvas.getBoundingClientRect(), W = Math.round(cb.width), H = Math.round(cb.height); // soft by nature, so one device pixel per CSS pixel is plenty
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    const vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }';
+    const fs = `precision mediump float;
+      uniform float u_t, u_pow, u_ox, u_oy, u_h, u_w, u_gust;
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(hash(i), hash(i + vec2(1., 0.)), f.x), mix(hash(i + vec2(0., 1.)), hash(i + vec2(1., 1.)), f.x), f.y); }
+      float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= .5; } return v; }
+      void main(){
+        float y = (gl_FragCoord.y - u_oy) / u_h;
+        float x = (gl_FragCoord.x - u_ox) / u_w;
+        if (y < -.12 || y > 1.45 || abs(x) > 1.6) discard;
+        // Three noises: a slow wide one bends the whole column, two faster ones tear the tongues. Everything scrolls up.
+        float lean = fbm(vec2(y * 1.2, u_t * .9)) - .5;
+        float xc = x + lean * .9 * clamp(y, 0., 1.);
+        vec2 q = vec2(xc * 1.3, y * 2.0);
+        float n1 = fbm(q * 1.8 + vec2(0., -u_t * 2.2));
+        float n2 = fbm(q * 3.4 + vec2(u_t * .2, -u_t * 3.6) + n1 * 1.8);
+        float n = mix(n1, n2, .6);
+        float width = mix(1.0, .22, clamp(y, 0., 1.)) * u_gust;
+        float shape = 1.0 - smoothstep(0.0, 1.0, abs(xc) / width + (n - .5) * 1.3);
+        float vert = 1.0 - smoothstep(.4, 1.35, y + (n - .5) * 1.7);
+        float base = smoothstep(-.1, .14, y);
+        float i = shape * vert * base * (.3 + n * 1.5) * u_pow;
+        i = pow(clamp(i, 0., 1.), 1.5);
+        vec3 c = mix(vec3(.45, .03, .0), vec3(1., .3, .03), smoothstep(.06, .4, i));
+        c = mix(c, vec3(1., .7, .15), smoothstep(.4, .74, i));
+        c = mix(c, vec3(1., .95, .75), smoothstep(.74, 1., i) * (1. - smoothstep(.2, .7, y)));
+        float a = smoothstep(.06, .5, i);
+        gl_FragColor = vec4(c * a, a);
+      }`;
+    const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+    let prog;
+    try { prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog); if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null; } catch (e) { return null; }
+    gl.useProgram(prog);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = {}; ['u_t', 'u_pow', 'u_ox', 'u_oy', 'u_h', 'u_w', 'u_gust'].forEach((k) => { U[k] = gl.getUniformLocation(prog, k); });
+    gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0);
+    // Geometry in device pixels, y up from the canvas bottom. The flame stands on the bed and is tall enough to pass the logo.
+    const oxp = (ox - cb.left) * dpr, oyp = (H - (oy - cb.top)) * dpr, hp = ((oy - topY) + logoH * .9) * dpr, wp = Math.min(W * .42, 330) * dpr;
+    gl.uniform1f(U.u_ox, oxp); gl.uniform1f(U.u_oy, oyp); gl.uniform1f(U.u_h, hp); gl.uniform1f(U.u_w, wp);
+    let power = 0, target = 1, burstAt = -1, raf = 0, on = false, t0 = 0, last = 0;
+    const frame = (now) => {
+      if (!on) return;
+      const dt = Math.min(48, now - last || 16); last = now; const t = (now - t0) / 1000;
+      power += (target - power) * Math.min(1, dt / 420);
+      const boom = burstAt < 0 ? 0 : Math.max(0, 1 - (now - burstAt) / 600) * .7;
+      const gust = .86 + .14 * Math.sin(t * 1.9) * Math.sin(t * 4.7) + .06 * Math.sin(t * 11.3);
+      gl.uniform1f(U.u_t, t); gl.uniform1f(U.u_pow, power * (.86 + .14 * Math.abs(Math.sin(t * 2.3) * Math.sin(t * 5.1))) + boom); gl.uniform1f(U.u_gust, gust + boom * .4);
+      gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLES, 0, 3);
+      raf = requestAnimationFrame(frame);
+    };
+    return {
+      start() { on = true; t0 = last = performance.now(); raf = requestAnimationFrame(frame); },
+      settle(v) { target = v; },
+      burst() { burstAt = performance.now(); },
+      stop() { on = false; cancelAnimationFrame(raf); gl.clear(gl.COLOR_BUFFER_BIT); }
+    };
+  }
+
   // ---------- the entry, once per tab: an ember falls onto the cold bed, the coals catch where it lands, a flame climbs and the logo rises out of it, the curtain lifts. Skip in the corner. ----------
   // The flame is particles on one canvas with additive light: soft discs born on a short line across the bed where the ember landed, white-yellow at birth, orange then red as they climb, shrinking and fading;
   // grey ones behind them are the smoke, tiny long-lived ones the sparks. They climb just fast enough to reach the top of the logo, so the logo comes up through the fire on every screen size.
-  function flame(canvas, ox, oy, topY) {
+  function flame(canvas, ox, oy, topY, sparksOnly) {
     const cx = canvas.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 1.5), cb = canvas.getBoundingClientRect(), W = Math.round(cb.width), H = Math.round(cb.height);
     canvas.width = W * dpr; canvas.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); oy -= cb.top; topY -= cb.top; // the canvas covers only the lower part of the screen, so less to clear each frame
     const sprite = (inner, mid) => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, inner); r.addColorStop(.42, mid); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c; };
@@ -579,7 +648,7 @@
       power += (target - power) * Math.min(1, dt / 420);
       // Gusts: the fire breathes hard and unevenly, so it never looks like a steady fountain.
       gust = .7 + .45 * Math.abs(Math.sin(now / 95) * Math.sin(now / 260)) + (Math.random() < .03 ? .5 : 0);
-      spawn(fire, 0, (phone ? 300 : 600) * gust, dt, 820); spawn(smoke, 1, phone ? 6 : 9, dt, 40); spawn(sparks, 2, 7, dt, 30);
+      if (!sparksOnly) { spawn(fire, 0, (phone ? 300 : 600) * gust, dt, 820); spawn(smoke, 1, phone ? 6 : 9, dt, 40); } spawn(sparks, 2, sparksOnly ? 12 : 7, dt, 40);
       move(fire, dt, .5, 1.6); move(smoke, dt, .3, .4); move(sparks, dt, .2, 0);
       cx.clearRect(0, 0, W, H);
       cx.globalCompositeOperation = 'source-over';
@@ -604,10 +673,10 @@
   if (intro && !session.get('mankal-intro')) {
     body.classList.add('intro-wait');
     const drop = $('.intro-drop', intro), impact = $('.intro-impact', intro), bed = $('#intro-bed', intro), hole = $('.hole', bed), hot = $('.hot', bed), logo = $('.intro-logo', intro);
-    const timers = []; let done = false, fire = null; const phoneW = innerWidth < 700;
+    const timers = []; let done = false, fire = null, sparks = null; const phoneW = innerWidth < 700;
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
     const finish = () => {
-      if (done) return; done = true; timers.forEach(clearTimeout); if (fire) fire.stop();
+      if (done) return; done = true; timers.forEach(clearTimeout); if (fire) fire.stop(); if (sparks) sparks.stop();
       intro.classList.add('lift'); body.classList.remove('intro-wait'); light(); session.set('mankal-intro', '1');
       setTimeout(() => intro.classList.add('gone'), reduce ? 400 : 800);
     };
@@ -623,9 +692,9 @@
       drop.style.setProperty('--h', (py + 12) + 'px'); impact.style.setProperty('--ty', py + 'px');
       if (reduce) { hole.style.transform = 'translate(-50%, -50%) scale(1)'; hot.style.transform = 'none'; intro.classList.add('wake', 'burn', 'show-logo'); at(900, finish); return; }
       drop.classList.add('go');
-      at(640, () => { intro.classList.add('wake', 'burn'); reveal(1300); fire = flame($('#intro-fire', intro), px, py, logo.getBoundingClientRect().top); fire.start(); });
-      at(1000, () => { intro.classList.add('show-logo'); if (fire) fire.burst(phoneW ? 70 : 110); });
-      at(2700, () => { if (fire) fire.settle(.5); });
+      at(640, () => { intro.classList.add('wake', 'burn'); reveal(1300); const lr = logo.getBoundingClientRect(); fire = fireGL($('#intro-fire', intro), px, py, lr.top, lr.height); if (fire) { sparks = flame($('#intro-sparks', intro), px, py, lr.top, true); sparks.start(); } else fire = flame($('#intro-sparks', intro), px, py, lr.top); fire.start(); });
+      at(1000, () => { intro.classList.add('show-logo'); if (fire) fire.burst(phoneW ? 70 : 110); if (sparks) sparks.burst(phoneW ? 14 : 22); });
+      at(2700, () => { if (fire) fire.settle(.7); });
       at(3600, finish);
     };
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));

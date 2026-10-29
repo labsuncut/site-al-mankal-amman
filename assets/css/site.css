@@ -508,15 +508,20 @@ html[dir="rtl"] .drawer-panel { transform: translateX(-100%); }
 .bk-line .thumb img { width: 100%; height: 100%; object-fit: cover; }
 .bk-line .name { font-weight: 500; margin: 0; line-height: 1.3; }
 .bk-line .each { font-size: .82rem; color: var(--muted); }
-.bk-pair { margin: 16px 0 4px; padding: 12px 14px 4px; border-radius: 14px; background: var(--sand); }
-.bk-pair h3 { font: 700 .95rem var(--text); margin: 0 0 4px; }
-.bk-pick { display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(0, 0, 0, .06); }
-.bk-pick:first-of-type { border-top: 0; }
-.bk-pick .thumb { width: 48px; height: 48px; border-radius: 10px; overflow: hidden; background: var(--paper); }
-.bk-pick .thumb img { width: 100%; height: 100%; object-fit: cover; }
-.bk-pick .name { font-weight: 500; margin: 0; line-height: 1.25; }
-.bk-pick .each { font-size: .8rem; color: var(--muted); }
-.bk-pick .btn { padding: 8px 14px; font-size: .88rem; }
+.up { margin: 16px 0 4px; padding: 12px 0 2px; border-top: 1px solid var(--line); }
+.up h3 { font: 700 1rem var(--text); margin: 0 0 2px; }
+.up-h { font-size: .82rem; color: var(--muted); margin: 10px 0 6px; }
+.up-row { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; padding: 2px 2px 8px; margin: 0 -2px; scrollbar-width: none; }
+.up-row::-webkit-scrollbar { display: none; }
+.up-card { position: relative; flex: 0 0 118px; scroll-snap-align: start; background: var(--sand); border-radius: 14px; padding: 8px 8px 10px; display: grid; gap: 4px; }
+.up-card .thumb { width: 100%; aspect-ratio: 1.3; border-radius: 10px; overflow: hidden; background: var(--paper); }
+.up-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.up-card .name { font-weight: 500; font-size: .86rem; line-height: 1.2; margin: 2px 0 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.up-card .each { font-size: .8rem; color: var(--muted); }
+.up-card .add-s { position: absolute; top: 12px; inset-inline-end: 12px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: var(--red); color: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, .25); transition: transform 150ms var(--ease); }
+.up-card .add-s svg { width: 16px; height: 16px; }
+.up-card .add-s:hover { transform: scale(1.08); }
+.up-card .add-s:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .bk-total { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 1.1rem; }
 .bk-clear { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 6px; justify-self: center; }
 .bk-empty { text-align: center; padding: 40px 10px; display: grid; gap: 10px; justify-items: center; }
