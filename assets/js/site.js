@@ -437,37 +437,61 @@
     }, { once: true });
   }
 
-  // ---------- hero spots: each dish on the table names itself and opens its category; one lights at a time until touched ----------
-  const spots = $$('.hero .spot');
-  if (spots.length) {
-    spots.forEach((s) => { if (parseFloat(s.style.getPropertyValue('--x')) > 58) s.classList.add('flip'); });
-    let k = -1, timer = 0;
-    const next = () => { spots[k]?.classList.remove('live'); k = (k + 1) % spots.length; spots[k].classList.add('live'); };
-    const cycle = () => { if (reduce) { spots[0].classList.add('live'); return; } next(); timer = setInterval(next, 2600); };
-    const stopCycle = () => { if (timer) { clearInterval(timer); timer = 0; spots.forEach((s) => s.classList.remove('live')); } };
-    const begin = () => setTimeout(cycle, body.classList.contains('intro-wait') ? 2600 : 1400);
-    if (body.classList.contains('lit')) begin(); else new MutationObserver((m, o) => { if (body.classList.contains('lit')) { o.disconnect(); begin(); } }).observe(body, { attributes: true, attributeFilter: ['class'] });
-    const ph = $('.hero-photo');
-    ph.addEventListener('pointerenter', stopCycle); ph.addEventListener('touchstart', stopCycle, { passive: true }); ph.addEventListener('focusin', stopCycle);
-    spots.forEach((s) => s.addEventListener('click', () => {
-      stopCycle(); s.classList.add('live');
-      const key = s.dataset.spot; if (TABS.some((x) => x.key === key)) { tab = ''; selectTab(key, false); }
-      $('#menu').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-    }));
-  }
-
-  // ---------- the fire band: the grill loop, only while on screen (the coals and skewers are CSS) ----------
+  // ---------- the fire band: the grill loop and the embers, only while on screen ----------
   const fire = $('.fire');
   if (fire) {
-    const fv = $('#fire-video', fire);
+    const fv = $('#fire-video', fire), canvas = $('canvas', fire);
     const tall = innerWidth / innerHeight < .9, file = tall ? 'grill-tall' : 'grill-wide';
     fv.poster = `assets/img/s/${file}.webp`;
     const src = fv.canPlayType('video/mp4; codecs="avc1.4d401e"') ? `assets/video/${file}.mp4` : `assets/video/${file}.webm`;
     const play = () => { if (!fv.src) fv.src = src; const p = fv.play(); if (p && p.catch) p.catch(() => {}); };
+    // Embers: they are born in the glow at the foot of the band, rise on a slow wind, flicker, and cool from white-gold to red as they fade.
+    // A few heavier sparks tumble up more slowly. Everything is drawn on one canvas with additive light, so overlapping embers brighten.
+    const ex = canvas.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 1.5), phone = innerWidth < 900;
+    let W = 0, H = 0, embers = [], running = false, last = 0, bellow = 0, wind = 0, windTarget = 0;
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    function size() { const r = fire.getBoundingClientRect(); W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height)); canvas.width = W * dpr; canvas.height = H * dpr; ex.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    function born() {
+      const heavy = Math.random() < .12, cx = W * .5 + (Math.random() - .5) * (Math.random() - .5) * W * 1.6;
+      return { x: Math.min(W - 4, Math.max(4, cx)), y: H + rnd(0, 14), vx: rnd(-.1, .1), vy: heavy ? -rnd(.22, .45) : -rnd(.45, 1.15), life: 0, max: heavy ? rnd(4500, 7500) : rnd(2400, 5200), s: heavy ? rnd(2.2, 3.4) : rnd(.9, 2.2), ph: rnd(0, 6.28), fl: rnd(.004, .012), sw: rnd(.5, 1.6), heavy };
+    }
+    function frame(time) {
+      if (!running) return;
+      const dt = Math.min(48, time - (last || time)); last = time;
+      bellow *= Math.pow(.3, dt / 1000);
+      if (Math.random() < dt / 2600) windTarget = rnd(-.35, .35);
+      wind += (windTarget - wind) * dt / 1800;
+      const rate = (phone ? 11 : 20) + bellow * 50, cap = phone ? 60 : 130;
+      let n = rate * dt / 1000; while (n > 0 && embers.length < cap) { if (n >= 1 || Math.random() < n) embers.push(born()); n -= 1; }
+      ex.clearRect(0, 0, W, H);
+      ex.globalCompositeOperation = 'lighter';
+      for (let i = embers.length - 1; i >= 0; i--) {
+        const e = embers[i]; e.life += dt;
+        if (e.life > e.max || e.y < -12) { embers.splice(i, 1); continue; }
+        const u = e.life / e.max, k = dt / 16;
+        e.x += (e.vx + wind * (e.heavy ? .5 : 1) + Math.sin(time * .0011 * e.sw + e.ph) * (e.heavy ? .12 : .26)) * k;
+        e.y += e.vy * (1 - u * .4) * k;
+        const flick = .72 + .28 * Math.sin(time * e.fl * 6.28 + e.ph);
+        const a = (u < .1 ? u / .1 : 1 - (u - .1) / .9) * flick, sz = e.s * (1 - u * .45);
+        const r = 255, g = Math.round(225 - u * 150), b = Math.round(120 - u * 110);
+        ex.fillStyle = `rgba(${r},${g},${b},${a})`;
+        ex.beginPath(); ex.arc(e.x, e.y, sz, 0, 6.2832); ex.fill();
+        if (sz > 1.3) {
+          const halo = ex.createRadialGradient(e.x, e.y, 0, e.x, e.y, sz * (e.heavy ? 5 : 3.6));
+          halo.addColorStop(0, `rgba(255,${Math.round(170 - u * 60)},40,${a * .32})`); halo.addColorStop(1, 'rgba(255,120,30,0)');
+          ex.fillStyle = halo; ex.beginPath(); ex.arc(e.x, e.y, sz * (e.heavy ? 5 : 3.6), 0, 6.2832); ex.fill();
+        }
+      }
+      ex.globalCompositeOperation = 'source-over';
+      requestAnimationFrame(frame);
+    }
+    function start() { if (running || reduce || document.hidden) return; running = true; last = 0; bellow = .6; requestAnimationFrame(frame); }
+    function stop() { running = false; }
     if (hasIO && !reduce) {
       let near = false;
-      new IntersectionObserver((en) => { en.forEach((x) => { near = x.isIntersecting; if (near) play(); else fv.pause(); }); }, { rootMargin: '80px 0px' }).observe(fire);
-      document.addEventListener('visibilitychange', () => { if (document.hidden) fv.pause(); else if (near) play(); });
+      new IntersectionObserver((en) => { en.forEach((x) => { near = x.isIntersecting; if (near) { size(); start(); play(); } else { stop(); fv.pause(); } }); }, { rootMargin: '80px 0px' }).observe(fire);
+      addEventListener('resize', () => { if (near) size(); });
+      document.addEventListener('visibilitychange', () => { if (document.hidden) { stop(); fv.pause(); } else if (near) { start(); play(); } });
     }
   }
 

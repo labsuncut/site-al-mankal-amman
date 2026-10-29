@@ -84,8 +84,7 @@ const TEXT = {
     mode_note: "Address, phone and payment are confirmed on Al Mankal's own order page.",
 
     menu_eyebrow: 'The menu', menu_title: "What's on the coals today?",
-    menu_for: '{m} from {b}', for_change: 'Change', for_hint: 'Check the branch before you order.',
-    hs_tikka: 'Chicken tikka', hs_kebab: 'Chicken kebab', hs_puri: 'Puri bread', hs_hummus: 'Hummus and dips', hs_see: 'See it on the menu', hs_aria: 'Dishes on the table', rail_aria: 'Menu categories', sig: 'Signature',
+    menu_for: '{m} from {b}', for_change: 'Change', for_hint: 'Check the branch before you order.', rail_aria: 'Menu categories', sig: 'Signature',
     full_menu: 'Full menu with search',
     photo_note: "Photos are Al Mankal's own. Dishes without one yet show the logo.",
     nophoto: 'Photo coming soon',
@@ -177,8 +176,7 @@ const TEXT = {
     mode_note: 'العنوان والرقم والدفع بتأكدهم على صفحة الطلب الخاصة بالمنقل.',
 
     menu_eyebrow: 'القائمة', menu_title: 'شو على المنقل اليوم؟',
-    menu_for: '{m} من {b}', for_change: 'غيّر', for_hint: 'تأكد من الفرع قبل ما تطلب.',
-    hs_tikka: 'تشكن تكا', hs_kebab: 'كباب دجاج', hs_puri: 'خبز بوري', hs_hummus: 'حمص وصوصات', hs_see: 'شوفه على القائمة', hs_aria: 'أطباق السفرة', rail_aria: 'أقسام القائمة', sig: 'المميّزة',
+    menu_for: '{m} من {b}', for_change: 'غيّر', for_hint: 'تأكد من الفرع قبل ما تطلب.', rail_aria: 'أقسام القائمة', sig: 'المميّزة',
     full_menu: 'القائمة كاملة مع البحث',
     photo_note: 'الصور من المنقل نفسه. الأطباق اللي لسا ما إلها صورة بيظهر مكانها الشعار.',
     nophoto: 'الصورة قريباً',
