@@ -42,6 +42,9 @@
 
   // ---------- menu data and photos ----------
   const byId = {}; MENU.forEach((c) => c.items.forEach((i) => { byId[i.id] = i; }));
+  const catById = {}; MENU.forEach((c) => c.items.forEach((i) => { catById[i.id] = catById[i.id] || c.key; })); const catOf = (id) => catById[id];
+  // Ids on the restaurant's store used by the basket's 'goes well with it' row (menu-data.js).
+  const PAIR = { dip: '23359396', bread: '23359364', drink: '32509051', shan: '23359402', salad: '23359392', fries: '23359377', main: '23359335' };
   const SIG = SIGNATURE.map((id) => byId[id]).filter(Boolean);
   const TABS = [{ key: 'sig', items: SIG }].concat(MENU.map((c) => ({ key: c.key, cat: c, items: c.items })));
   function photoOf(item) {
@@ -305,6 +308,27 @@
         <div class="thumb">${p && p.own ? `<img src="assets/img/s/${p.own}-480.webp" alt="" loading="lazy">` : p && p.store ? `<img src="${esc(p.store)}" alt="" loading="lazy">` : ''}</div>
         <div><p class="name">${esc(it[lang])}</p><span class="each">${num(it.price)} ${t('jd')}</span></div>
         <span data-ctl="${id}">${controlHtml(id)}</span></div>`; }).join('');
+    // Goes well with it: up to three small things the basket is missing, from the restaurant's own menu. Meals already include their cola, dip and bread (their descriptions say so), so those are not offered twice.
+    const have = (test) => ids.some((id) => test(byId[id], catOf(id)));
+    const said = (word) => have((it) => new RegExp(word, 'i').test(it.den || ''));
+    const inCat = (k) => have((it, c) => c === k);
+    const hasMain = inCat('collection-1460895') || inCat('collection-9877883') || inCat('chicken-meals') || inCat('sandwiches') || inCat('main-dishes');
+    const picks = [];
+    const offer = (id, why) => { if (!basket[id] && byId[id] && picks.length < 3 && !picks.some((p) => p.id === id)) picks.push({ id, why }); };
+    if (hasMain) {
+      if (!inCat('dips') && !said('garlic|sumac|مثومة')) offer(PAIR.dip, 'pair_dip');
+      if (!said('bread|puri|pouri|bouri|بوري|خبز') && !inCat('sandwiches')) offer(PAIR.bread, 'pair_bread');
+      if (!inCat('beverages') && !said('cola|كولا')) offer(PAIR.drink, 'pair_drink');
+      if (!inCat('cold-appetizers') && !said('hummus|salad|حمص|سلطة')) offer(PAIR.salad, 'pair_salad');
+      if (!said('fries|بطاطا')) offer(PAIR.fries, 'pair_fries');
+      offer(PAIR.shan, 'pair_shan');
+    } else offer(PAIR.main, 'pair_main');
+    const pairHtml = picks.length ? `<section class="bk-pair" aria-labelledby="bk-pair-t"><h3 id="bk-pair-t">${t('bk_pair')}</h3>${picks.map(({ id, why }) => { const it = byId[id], p = photoOf(it); return `<div class="bk-pick">
+        <div class="thumb">${p && p.own ? `<img src="assets/img/s/${p.own}-480.webp" alt="" loading="lazy">` : p && p.store ? `<img src="${esc(p.store)}" alt="" loading="lazy">` : ''}</div>
+        <div><p class="name">${esc(it[lang])}</p><span class="each">${esc(t(why))} · ${num(it.price)} ${t('jd')}</span></div>
+        <button class="btn btn-line" type="button" data-pair="${id}" aria-label="${esc(t('add_short'))} ${esc(it[lang])}">${t('add_short')}</button></div>`; }).join('')}</section>` : '';
+    bodyEl.insertAdjacentHTML('beforeend', pairHtml);
+    $$('[data-pair]', bodyEl).forEach((b) => b.addEventListener('click', () => { const id = b.dataset.pair; setQty(id, 1); bump(); renderBasket(); const n = $('[data-pair]', bodyEl) || $('#bk-go'); if (n) n.focus(); }));
     foot.innerHTML = `<div class="bk-total"><span>${t('bk_total')}</span><span class="price">${num(total())}<small>${t('jd')}</small></span></div><button class="btn btn-red" type="button" id="bk-go">${t('bk_checkout')}</button><button class="bk-clear" type="button" id="bk-clear">${t('bk_clear')}</button><p class="note">${t('bk_note')}</p>`;
     $('#bk-go').addEventListener('click', () => { handover = true; renderBasket(); $('#ho-go').focus(); });
     $('#bk-clear').addEventListener('click', () => { Object.keys(basket).forEach((id) => { delete basket[id]; syncControls(id); }); saveBasket(); renderBasket(); });
@@ -538,28 +562,30 @@
     canvas.width = W * dpr; canvas.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); oy -= cb.top; topY -= cb.top; // the canvas covers only the lower part of the screen, so less to clear each frame
     const sprite = (inner, mid) => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, inner); r.addColorStop(.42, mid); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c; };
     const S = [sprite('rgba(255,250,225,1)', 'rgba(255,205,90,.55)'), sprite('rgba(255,175,60,1)', 'rgba(255,110,30,.45)'), sprite('rgba(255,90,30,.95)', 'rgba(190,30,20,.35)'), sprite('rgba(130,120,115,.5)', 'rgba(80,75,72,.12)'), sprite('rgba(255,235,190,1)', 'rgba(255,150,50,.6)')];
-    const reach = Math.max(150, oy - topY + 36), spread = Math.min(W * .27, 190), base = Math.max(8, reach * .055), phone = W < 700;
+    const reach = Math.max(200, oy - topY + 120), phone = W < 700, spread = Math.min(W * .3, phone ? 210 : 270), base = Math.max(8, reach * (phone ? .038 : .05));
     const fire = [], smoke = [], sparks = [];
-    let power = 0, target = 1, raf = 0, last = 0, on = false, carry = [0, 0, 0];
+    let power = 0, target = 1, raf = 0, last = 0, on = false, carry = [0, 0, 0], gust = 1;
     const born = (kind) => {
       const t = (Math.random() - .5) * 2, edge = 1 - Math.abs(t) * .5;
       if (kind === 2) return { x: ox + t * spread, y: oy, vx: (Math.random() - .5) * 60, vy: -reach * (1.1 + Math.random() * .8), s: 1.2 + Math.random() * 1.4, life: 0, max: 900 + Math.random() * 900, sway: Math.random() * 6.3 };
       if (kind === 1) return { x: ox + t * spread * .9, y: oy - base, vx: (Math.random() - .5) * 24, vy: -reach * (.45 + Math.random() * .3) * edge, s: base * (1.4 + Math.random() * .8), life: 0, max: 1500 + Math.random() * 900, sway: Math.random() * 6.3 };
-      return { x: ox + t * spread, y: oy + (Math.random() - .5) * base * .6, vx: (Math.random() - .5) * 40, vy: -(reach / .66) * (.85 + Math.random() * .4) * edge, s: base * (phone ? .9 : .7) * (1 + Math.random() * 1.1), life: 0, max: 620 + Math.random() * 420, sway: Math.random() * 6.3 };
+      const core = Math.abs(t) < .35; return { x: ox + t * spread, y: oy + base * .6 + (Math.random() - .5) * base * .6, vx: (Math.random() - .5) * 70, vy: -(reach / .52) * (.9 + Math.random() * .5) * edge * gust * (core ? 1.15 : 1), s: base * (phone ? .95 : .75) * (1 + Math.random() * 1.1) * (core ? 1.15 : 1), life: 0, max: 620 + Math.random() * 400, sway: Math.random() * 6.3, f: 120 + Math.random() * 120 };
     };
     const spawn = (list, kind, rate, dt, cap) => { carry[kind] += rate * power * dt / 1000; while (carry[kind] >= 1 && list.length < cap) { list.push(born(kind)); carry[kind] -= 1; } };
-    const move = (list, dt, slow, pull) => { for (let i = list.length - 1; i >= 0; i--) { const p = list[i]; p.life += dt; const u = p.life / p.max; if (u >= 1) { list.splice(i, 1); continue; } p.x += (p.vx + Math.sin(p.sway + p.life / 150) * 18 + (ox - p.x) * pull) * dt / 1000; p.y += p.vy * (1 - u * slow) * dt / 1000; p.u = u; } };
+    const move = (list, dt, slow, pull) => { for (let i = list.length - 1; i >= 0; i--) { const p = list[i]; p.life += dt; const u = p.life / p.max; if (u >= 1) { list.splice(i, 1); continue; } p.x += (p.vx + Math.sin(p.sway + p.life / (p.f || 150)) * 34 + (ox - p.x) * pull) * dt / 1000; p.y += p.vy * (1 - u * slow) * dt / 1000; p.u = u; } };
     const frame = (now) => {
       if (!on) return;
       const dt = Math.min(48, now - last || 16); last = now;
       power += (target - power) * Math.min(1, dt / 420);
-      spawn(fire, 0, phone ? 230 : 400, dt, 520); spawn(smoke, 1, phone ? 6 : 9, dt, 40); spawn(sparks, 2, 7, dt, 30);
+      // Gusts: the fire breathes hard and unevenly, so it never looks like a steady fountain.
+      gust = .7 + .45 * Math.abs(Math.sin(now / 95) * Math.sin(now / 260)) + (Math.random() < .03 ? .5 : 0);
+      spawn(fire, 0, (phone ? 300 : 600) * gust, dt, 820); spawn(smoke, 1, phone ? 6 : 9, dt, 40); spawn(sparks, 2, 7, dt, 30);
       move(fire, dt, .5, 1.6); move(smoke, dt, .3, .4); move(sparks, dt, .2, 0);
       cx.clearRect(0, 0, W, H);
       cx.globalCompositeOperation = 'source-over';
       for (const p of smoke) { const a = .13 * (1 - p.u) * Math.min(1, p.u * 4) * power, r = p.s * (.6 + p.u * 1.8); cx.globalAlpha = a; cx.drawImage(S[3], p.x - r, p.y - r, r * 2, r * 2); }
       cx.globalCompositeOperation = 'lighter';
-      for (const p of fire) { const a = (p.u < .1 ? p.u / .1 : Math.pow(1 - p.u, .9)) * .55, r = p.s * (1.25 - p.u * .6); cx.globalAlpha = a; cx.drawImage(S[p.u < .2 ? 0 : p.u < .62 ? 1 : 2], p.x - r, p.y - r, r * 2, r * 2); }
+      for (const p of fire) { const a = (p.u < .16 ? p.u / .16 : Math.pow(1 - p.u, .85)) * .6, r = p.s * (1.3 - p.u * .55); cx.globalAlpha = a; cx.drawImage(S[p.u < .2 ? 0 : p.u < .62 ? 1 : 2], p.x - r, p.y - r, r * 2, r * 2); }
       for (const p of sparks) { const a = 1 - p.u, r = p.s * 2.2; cx.globalAlpha = a; cx.drawImage(S[4], p.x - r, p.y - r, r * 2, r * 2); }
       cx.globalAlpha = 1;
       raf = requestAnimationFrame(frame);
@@ -567,6 +593,8 @@
     return {
       start() { on = true; last = performance.now(); raf = requestAnimationFrame(frame); },
       settle(v) { target = v; },
+      // A roar: one burst of fast particles, used the moment the logo starts to rise.
+      burst(n) { for (let i = 0; i < n; i++) { const p = born(0); p.vy *= 1.25; fire.push(p); } },
       stop() { on = false; cancelAnimationFrame(raf); cx.clearRect(0, 0, W, H); }
     };
   }
@@ -576,7 +604,7 @@
   if (intro && !session.get('mankal-intro')) {
     body.classList.add('intro-wait');
     const drop = $('.intro-drop', intro), impact = $('.intro-impact', intro), bed = $('#intro-bed', intro), hole = $('.hole', bed), hot = $('.hot', bed), logo = $('.intro-logo', intro);
-    const timers = []; let done = false, fire = null;
+    const timers = []; let done = false, fire = null; const phoneW = innerWidth < 700;
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
     const finish = () => {
       if (done) return; done = true; timers.forEach(clearTimeout); if (fire) fire.stop();
@@ -596,9 +624,9 @@
       if (reduce) { hole.style.transform = 'translate(-50%, -50%) scale(1)'; hot.style.transform = 'none'; intro.classList.add('wake', 'burn', 'show-logo'); at(900, finish); return; }
       drop.classList.add('go');
       at(640, () => { intro.classList.add('wake', 'burn'); reveal(1300); fire = flame($('#intro-fire', intro), px, py, logo.getBoundingClientRect().top); fire.start(); });
-      at(1000, () => intro.classList.add('show-logo'));
-      at(2500, () => { if (fire) fire.settle(.38); });
-      at(3400, finish);
+      at(1000, () => { intro.classList.add('show-logo'); if (fire) fire.burst(phoneW ? 70 : 110); });
+      at(2700, () => { if (fire) fire.settle(.5); });
+      at(3600, finish);
     };
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));
   } else {
