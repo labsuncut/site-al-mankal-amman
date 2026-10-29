@@ -95,15 +95,30 @@ body.no-js .ap, body.no-io .ap { opacity: 1; transform: none; }
 .intro { position: fixed; inset: 0; z-index: 80; background: var(--char); display: grid; place-items: center; overflow: hidden; will-change: transform; }
 .intro::before { content: ''; position: absolute; inset: auto 0 -30%; height: 80%; background: radial-gradient(50% 60% at 50% 100%, rgba(255, 122, 26, .4), rgba(200, 16, 46, .14) 45%, transparent 72%); opacity: 0; transition: opacity 1200ms var(--ease); }
 .intro.burn::before { opacity: 1; }
-.intro-stage { position: relative; display: grid; place-items: center; text-align: center; padding: 0 var(--gutter); transition: transform 700ms var(--ease), opacity 500ms var(--ease); }
+.intro-stage { position: relative; display: grid; grid-template-rows: auto auto; row-gap: 30px; justify-items: center; align-items: center; align-content: center; text-align: center; padding: 0 var(--gutter); transition: transform 700ms var(--ease), opacity 500ms var(--ease); }
 .intro-stage > * { grid-area: 1 / 1; }
+.intro-coals { grid-area: 2 / 1; position: relative; width: min(66vw, 320px); height: 64px; }
+@media (min-width: 700px) { .intro-coals { transform: scale(1.18); transform-origin: 50% 0; margin-bottom: 14px; } }
+.intro-coals i { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); border-radius: 46% 54% 48% 52% / 55% 47% 53% 45%; background: linear-gradient(var(--ca, 118deg), transparent 46%, rgba(0, 0, 0, .5) 48%, transparent 50.5%), radial-gradient(circle at 38% 28%, #3a3029, #262019 48%, #16110e); box-shadow: inset 0 -4px 7px rgba(0, 0, 0, .6), inset 2px 2px 3px rgba(255, 255, 255, .04); transform: rotate(var(--r, 0deg)); }
+.intro-coals i:nth-child(3n) { border-radius: 58% 42% 40% 60% / 45% 60% 40% 55%; --ca: 34deg; }
+.intro-coals i:nth-child(3n+1) { border-radius: 40% 60% 55% 45% / 62% 38% 62% 38%; --ca: 156deg; }
+.intro-coals i::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(var(--ca, 118deg), transparent 46.5%, rgba(255, 238, 180, .7) 48.2%, transparent 50%), radial-gradient(circle at 50% 56%, #ffd98a 0%, #ff8a2a 30%, #d7262d 62%, rgba(90, 25, 12, .6) 100%); opacity: 0; }
+.intro.wake .intro-coals i::after { animation: coal-wake 800ms var(--d, 0ms) var(--ease) forwards, coal-flicker 1.4s calc(var(--d, 0ms) + 800ms) ease-in-out infinite alternate; }
+@keyframes coal-wake { from { opacity: 0; } to { opacity: 1; } }
+@keyframes coal-flicker { from { opacity: .7; } to { opacity: 1; } }
+.intro-coals .glow { position: absolute; inset: -70% -30%; border-radius: 50%; background: radial-gradient(50% 55% at 50% 58%, rgba(255, 138, 42, .55), rgba(200, 16, 46, .22) 48%, transparent 74%); opacity: 0; }
+.intro.wake .intro-coals .glow { animation: glow-up 1400ms 150ms var(--ease) forwards, breathe 2.4s 1600ms ease-in-out infinite alternate; }
+@keyframes glow-up { to { opacity: 1; } }
+.intro-impact { position: fixed; left: 50%; top: var(--ty, 50%); width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: radial-gradient(circle, #fff6d0, #ff8a2a 38%, transparent 70%); opacity: 0; transform: scale(.2); }
+.intro.wake .intro-impact { animation: impact 520ms ease-out forwards; }
+@keyframes impact { 0% { opacity: 1; transform: scale(.2); } 100% { opacity: 0; transform: scale(2.8); } }
 .intro-drop { position: fixed; top: -14px; left: 50%; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 12px 4px rgba(255, 138, 42, .7); opacity: 0; }
 .intro-drop.go { animation: drop 640ms cubic-bezier(.5, 0, .9, .6) forwards; }
-.intro.burn .intro-drop { opacity: 0; animation: none; }
-@keyframes drop { from { opacity: 1; transform: translateY(0); } to { opacity: 1; transform: translateY(50vh); } }
-.intro-num { font-family: var(--display); font-weight: 800; font-size: clamp(4.6rem, 3rem + 8vw, 8.5rem); line-height: 1; color: var(--yellow); margin: 0 0 1.1em; font-variant-numeric: tabular-nums; opacity: 0; transform: translateY(12px); transition: opacity 420ms var(--ease), transform 520ms var(--ease); }
+.intro.wake .intro-drop { opacity: 0; animation: none; }
+@keyframes drop { from { opacity: 1; transform: translateY(0); } to { opacity: 1; transform: translateY(var(--h, 50vh)); } }
+.intro-num { font-family: var(--display); font-weight: 800; font-size: clamp(4.6rem, 3rem + 8vw, 8.5rem); line-height: 1; color: var(--yellow); margin: 0 0 .9em; font-variant-numeric: tabular-nums; opacity: 0; transform: translateY(12px); transition: opacity 420ms var(--ease), transform 520ms var(--ease); }
 .intro.show-num .intro-num { opacity: 1; transform: none; }
-.intro-word { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.4rem, 1rem + 1.8vw, 2.2rem); color: #fff; letter-spacing: .04em; margin: 1.6em 0 0; opacity: 0; transform: translateY(10px); transition: opacity 420ms var(--ease), transform 520ms var(--ease); white-space: nowrap; }
+.intro-word { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.4rem, 1rem + 1.8vw, 2.2rem); color: #fff; letter-spacing: .04em; margin: 1.9em 0 0; opacity: 0; transform: translateY(10px); transition: opacity 420ms var(--ease), transform 520ms var(--ease); white-space: nowrap; }
 html[lang="ar"] .intro-word { font-weight: 400; letter-spacing: 0; text-transform: none; }
 .intro.show-word .intro-word { opacity: 1; transform: none; }
 .intro.words-out .intro-num, .intro.words-out .intro-word { opacity: 0; transform: translateY(-14px); transition: opacity 260ms var(--ease), transform 300ms var(--ease); }
@@ -120,8 +135,8 @@ html[lang="ar"] .intro-word { font-weight: 400; letter-spacing: 0; text-transfor
 .intro.burn .intro-skip { opacity: 1; }
 .intro-skip:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .intro .spark { position: absolute; bottom: -10px; left: var(--x, 50%); width: 4px; height: 4px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 10px 2px rgba(255, 140, 40, .6); opacity: 0; }
-.intro.burn .spark { animation: spark 2200ms var(--d, 0ms) ease-out infinite; }
-.intro.burn .spark:nth-child(even) { animation-name: spark-l; }
+.intro.wake .spark { animation: spark 2200ms var(--d, 0ms) ease-out infinite; }
+.intro.wake .spark:nth-child(even) { animation-name: spark-l; }
 .intro .spark:nth-child(3) { --x: 18%; --d: 120ms; } .intro .spark:nth-child(4) { --x: 31%; --d: 640ms; } .intro .spark:nth-child(5) { --x: 44%; --d: 260ms; } .intro .spark:nth-child(6) { --x: 55%; --d: 900ms; } .intro .spark:nth-child(7) { --x: 63%; --d: 40ms; } .intro .spark:nth-child(8) { --x: 74%; --d: 520ms; } .intro .spark:nth-child(9) { --x: 86%; --d: 760ms; }
 @keyframes spark { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(22px, -72vh) scale(.3); opacity: 0; } }
 @keyframes spark-l { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(-22px, -72vh) scale(.3); opacity: 0; } }
@@ -534,6 +549,7 @@ html[dir="rtl"] .drawer-panel { transform: translateX(-100%); }
   .tiles .food img, .fire .glow { animation: none !important; }
   .intro.show-logo .intro-logo .cover, .intro.show-logo .intro-logo .heat { animation-duration: 500ms; }
   .intro-num, .intro-word, .intro-skip { transition-duration: 1ms; transition-delay: 0ms; }
+  .intro-coals i::after, .intro-coals .glow { animation: none !important; opacity: 1; } .intro-impact { animation: none !important; }
   .hero h1 .lit i::before, .hero h1 .lit .sp, .fireline .bed i, .fireline .tip, .order-go [data-call].ring svg { animation: none !important; }
   .hero h1 .lit i::before { opacity: .7; } .fireline .bed { transform: none; animation: none; } .fireline .tip { opacity: 1; transform: translateX(var(--w, 0px)); } .fireline b { opacity: 1; animation: none; }
   .hours.open i::after { animation: none; }

@@ -546,15 +546,24 @@
       setTimeout(() => intro.classList.add('gone'), reduce ? 400 : 800);
     };
     $('[data-skip-intro]', intro).addEventListener('click', finish);
+    const coals = $('#intro-coals'), impact = $('.intro-impact', intro);
+    // The ember lands in the middle of the coal bed; each coal wakes after a delay that grows with its distance from the impact.
+    const aim = () => {
+      const b = coals.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height * .5;
+      drop.style.setProperty('--h', (cy + 14) + 'px'); impact.style.setProperty('--ty', cy + 'px');
+      $$('i', coals).forEach((c) => { const r = c.getBoundingClientRect(); const d = Math.hypot(r.left + r.width / 2 - cx, r.top + r.height / 2 - cy); c.style.setProperty('--d', Math.round(40 + d * 2.4) + 'ms'); });
+    };
     const go = () => {
-      if (reduce) { numEl.textContent = digits(String(thisYear)); intro.classList.add('burn', 'show-num', 'show-word', 'show-logo'); at(900, finish); return; }
+      aim();
+      if (reduce) { numEl.textContent = digits(String(thisYear)); intro.classList.add('wake', 'burn', 'show-num', 'show-word', 'show-logo'); at(900, finish); return; }
       drop.classList.add('go');
-      at(600, () => intro.classList.add('burn', 'show-num'));
-      at(1250, () => { const t0 = performance.now(); const run = (now) => { const u = Math.min(1, (now - t0) / 850), e = 1 - Math.pow(1 - u, 3); numEl.textContent = digits(String(Math.round(1985 + (thisYear - 1985) * e))); if (u < 1 && !done) requestAnimationFrame(run); }; requestAnimationFrame(run); });
-      at(2150, () => intro.classList.add('show-word'));
-      at(2950, () => intro.classList.add('words-out'));
-      at(3200, () => intro.classList.add('show-logo'));
-      at(4250, finish);
+      at(640, () => intro.classList.add('wake', 'burn'));
+      at(1050, () => intro.classList.add('show-num'));
+      at(1450, () => { const t0 = performance.now(); const run = (now) => { const u = Math.min(1, (now - t0) / 850), e = 1 - Math.pow(1 - u, 3); numEl.textContent = digits(String(Math.round(1985 + (thisYear - 1985) * e))); if (u < 1 && !done) requestAnimationFrame(run); }; requestAnimationFrame(run); });
+      at(2350, () => intro.classList.add('show-word'));
+      at(3100, () => intro.classList.add('words-out'));
+      at(3350, () => intro.classList.add('show-logo'));
+      at(4450, finish);
     };
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));
   } else {
