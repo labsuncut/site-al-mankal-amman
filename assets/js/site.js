@@ -499,7 +499,7 @@
       if (on || !seen || !lit || reduce) return; on = true;
       if (!vid.src) vid.src = src;
       const p = vid.play(); if (p && p.catch) p.catch(() => {});
-      if (!sparks) { const r = mk.getBoundingClientRect(); sparks = flame(sp, r.width / 2, r.top + r.height * .62, r.top + r.height * .12, true); }
+      if (!sparks) { const r = mk.getBoundingClientRect(); sparks = flame(sp, r.width / 2, r.top + r.height * .86, r.top + r.height * .3, true); }
       sparks.start();
     };
     const stop = () => { if (!on) return; on = false; vid.pause(); if (sparks) sparks.stop(); };
