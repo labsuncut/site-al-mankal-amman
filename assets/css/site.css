@@ -257,6 +257,15 @@ body.lit .hero .rise.r1 { animation-delay: 120ms; } body.lit .hero .rise.r2 { an
   .hero-photo { margin: 0; order: 2; }
   .mankal { border-radius: 28px; aspect-ratio: auto; height: 100%; min-height: 540px; max-height: none; width: 100%; }
 }
+/* Wide laptops: the header and the hero share a wider frame, so the text starts further left and the headline grows to own the column; the rest of the page keeps its measure. */
+@media (min-width: 1440px) {
+  .head .wrap, .hero .wrap { max-width: 1480px; }
+  .hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 80px; }
+  .hero h1 { font-size: 7.4rem; max-width: 9ch; }
+  .hero-lead { font-size: 1.22rem; max-width: 34ch; }
+  .fireline { max-width: 560px; }
+  .order-card { max-width: 560px; }
+}
 
 /* ---------- order again ---------- */
 .again { margin: 0 0 8px; }
