@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/barlow-condensed-latin-800.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/rubik-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/site.css?v=8">
+  <link rel="stylesheet" href="assets/css/site.css?v=9">
   <script src="assets/js/lang.js?v=7"></script>
   <link rel="preload" as="image" href="assets/img/s/logo-760.webp">
   <link rel="preload" as="image" href="assets/img/s/bed-cold.webp">
@@ -79,13 +79,12 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-photo">
-          <!-- The mankal: the restaurant's own burning charcoal, close up, with small tongues of the fire film screen-blended low between the coals, live sparks, and the name written in ember above. -->
+          <!-- The hero visual: the restaurant's own skewer coming off the coals, a short seamless loop cut from its grill film (smoke drifting, embers under it), with small tongues of the fire film screen-blended low over the coals and live sparks. No name here: the intro has just said it. -->
           <div class="mankal" id="hero-mankal" aria-hidden="true">
-            <picture class="coals"><source type="image/avif" srcset="assets/img/s/coals-3-480.avif 480w, assets/img/s/coals-3-960.avif 960w" sizes="(min-width: 900px) 50vw, 100vw"><img src="assets/img/s/coals-3-960.webp" srcset="assets/img/s/coals-3-480.webp 480w, assets/img/s/coals-3-960.webp 960w" sizes="(min-width: 900px) 50vw, 100vw" alt="" width="960" height="278" fetchpriority="high"></picture>
-            <video class="flame" id="mankal-flame" muted loop playsinline preload="none" poster="assets/img/s/flame-still.webp" width="576" height="640"></video>
+            <video class="coals" id="mankal-film" muted loop playsinline preload="none" poster="assets/img/s/skewer-still.webp" width="720" height="756"></video>
+            <video class="flame" id="mankal-flame" muted loop playsinline preload="none" width="576" height="640"></video>
             <div class="heat"></div>
             <div class="dark"></div>
-            <div class="word"><svg viewBox="0 0 360 150" focusable="false"><defs><linearGradient id="emberfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3a0"/><stop offset=".55" stop-color="#ffb347"/><stop offset="1" stop-color="#ff6a1a"/></linearGradient></defs><text x="180" y="112" text-anchor="middle">المنقل</text></svg><small>Al Mankal · Amman · 1985</small></div>
             <canvas class="sparks" id="mankal-sparks"></canvas>
             <div class="fade"></div>
           </div>
@@ -290,6 +289,6 @@
 
   <script src="assets/js/content.js?v=7"></script>
   <script src="assets/js/menu-data.js?v=7"></script>
-  <script src="assets/js/site.js?v=8"></script>
+  <script src="assets/js/site.js?v=9"></script>
 </body>
 </html>

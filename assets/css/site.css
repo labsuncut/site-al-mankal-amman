@@ -167,33 +167,23 @@ html[lang="ar"] .brand small { text-transform: none; letter-spacing: 0; font-siz
 @keyframes bump { 40% { transform: scale(1.22); } }
 @media (min-width: 900px) { .head-nav { display: flex; } }
 
-/* ---------- home hero: the mankal itself (the brazier the restaurant is named after), and the first step of an order. It assembles when the curtain lifts. ---------- */
+/* ---------- home hero: the skewer off the coals (the restaurant's own film, a short seamless loop) and the first step of an order. It assembles when the curtain lifts. ---------- */
 .hero { padding: 0 0 36px; overflow: hidden; }
 .hero-grid { display: grid; gap: 0; }
 .hero-photo { position: relative; margin: 0 calc(var(--gutter) * -1); }
 @keyframes drift { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.06) translate(-1.2%, 1%); } }
-/* The brazier: charcoal body and rim drawn in the page's own black, the real coals from the grill film in the bowl (three frames cross-fading, so the flicker is the film's own),
-   a fire film rendered as a volume (assets/video/flame-*.mp4) screen-blended over the coals, the front half of the rim over the fire's base, live sparks on a canvas, and the name written in ember above. */
+/* The hero panel: the skewer off the coals, a short seamless loop cut from the restaurant's own grill film (smoke drifting, embers under it),
+   small tongues of the fire film (assets/video/flame-*.mp4) screen-blended low over the coals, and live sparks on a canvas. No name: the intro has just said it. */
 .mankal { position: relative; overflow: hidden; isolation: isolate; aspect-ratio: 10 / 10.4; max-height: 440px; background: #0b0806; }
 /* On the phone the charcoal dissolves into the page and the headline rises up into that fade, so the picture and the words are one piece. */
 .mankal .fade { inset: 0; z-index: 4; background: linear-gradient(180deg, transparent 50%, rgba(251, 246, 236, .7) 78%, var(--cream) 100%); pointer-events: none; }
 .hero-text { margin-top: -27%; }
 .mankal > * { position: absolute; }
-.mankal .coals { inset: 0; }
-.mankal .coals img { width: 100%; height: 100%; object-fit: cover; object-position: 56% 50%; display: block; filter: saturate(.95) brightness(.92) contrast(1.06); }
-.mankal .dark { inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(8, 5, 3, .96) 0%, rgba(8, 5, 3, .9) 28%, rgba(8, 5, 3, .55) 48%, rgba(8, 5, 3, 0) 70%, rgba(8, 5, 3, .35) 100%), radial-gradient(70% 60% at 50% 100%, transparent 50%, rgba(8, 5, 3, .7) 100%); }
-.mankal .heat { inset: 0; z-index: 1; background: radial-gradient(55% 35% at 50% 92%, rgba(255, 150, 60, .22), transparent 70%); opacity: 0; transition: opacity 500ms var(--ease); }
+.mankal .coals { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; display: block; filter: saturate(1.04) contrast(1.04); background: #0b0806 url('../img/s/skewer-still.webp') center 40% / cover no-repeat; }
+.mankal .dark { inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(8, 5, 3, .34) 0%, rgba(8, 5, 3, 0) 30%, rgba(8, 5, 3, 0) 72%, rgba(8, 5, 3, .42) 100%), radial-gradient(90% 80% at 50% 45%, transparent 60%, rgba(8, 5, 3, .5) 100%); }
+.mankal .heat { inset: 0; z-index: 1; background: radial-gradient(60% 30% at 50% 96%, rgba(255, 150, 60, .26), transparent 70%); opacity: 0; transition: opacity 500ms var(--ease); }
 .mankal.fan .heat { opacity: 1; transition-duration: 220ms; }
-.mankal .word { left: 0; right: 0; top: 10%; text-align: center; z-index: 3; }
-.mankal .word svg { width: min(62%, 270px); height: auto; overflow: visible; filter: drop-shadow(0 2px 14px rgba(0, 0, 0, .7)); }
-.mankal .word text { font: 400 118px/1 'Lalezar', var(--display); fill: url(#emberfill); fill-opacity: 0; stroke: #ffb347; stroke-width: 1.5; stroke-dasharray: 2600; stroke-dashoffset: 2600; }
-body.lit .mankal .word text { animation: word-draw 1900ms cubic-bezier(.3, 0, .2, 1) 500ms forwards, word-fill 900ms ease 1900ms forwards; }
-@keyframes word-draw { to { stroke-dashoffset: 0; } }
-@keyframes word-fill { to { fill-opacity: 1; } }
-.mankal .word small { display: block; margin-top: 4px; font: 700 .68rem/1 var(--text); letter-spacing: .22em; text-transform: uppercase; color: rgba(255, 227, 160, .7); opacity: 0; }
-html[lang="ar"] .mankal .word small { letter-spacing: .12em; }
-body.lit .mankal .word small { animation: fade-in 600ms ease 2500ms forwards; }
-.mankal .flame { left: 12%; width: 76%; top: 34%; height: 52%; object-fit: cover; object-position: 50% 100%; mix-blend-mode: screen; z-index: 1; opacity: .5; -webkit-mask-image: radial-gradient(ellipse 42% 85% at 50% 100%, #000 35%, transparent 100%); mask-image: radial-gradient(ellipse 42% 85% at 50% 100%, #000 35%, transparent 100%); transform-origin: 50% 100%; transition: transform 700ms var(--ease); }
+.mankal .flame { left: 18%; width: 64%; top: 58%; height: 40%; object-fit: cover; object-position: 50% 100%; mix-blend-mode: screen; z-index: 1; opacity: .34; -webkit-mask-image: radial-gradient(ellipse 42% 85% at 50% 100%, #000 35%, transparent 100%); mask-image: radial-gradient(ellipse 42% 85% at 50% 100%, #000 35%, transparent 100%); transform-origin: 50% 100%; transition: transform 700ms var(--ease); }
 .mankal.fan .flame { transform: scaleY(1.08); transition-duration: 350ms; }
 .mankal .sparks { inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 .hero-text { position: relative; }
@@ -599,7 +589,7 @@ html[dir="rtl"] .drawer-panel { transform: translateX(-100%); }
   .hero h1 .lit i::before { opacity: .7; } .fireline .bed { transform: none; animation: none; } .fireline .tip { opacity: 1; transform: translateX(var(--w, 0px)); } .fireline b { opacity: 1; animation: none; }
   .hours.open i::after { animation: none; }
   body.lit .hero .mankal, body.lit .hero .rise, body.lit .page-hero .photo img { animation-duration: 1ms; animation-delay: 0ms; }
-  .mankal .word text { stroke-dashoffset: 0; fill-opacity: 1; animation: none; } .mankal .word small { opacity: 1; animation: none; } .mankal .flame { transition: none; }
+  .mankal .flame { transition: none; }
   .grid.swap .card, .stepper { animation: none; }
   .ap, .bar, .card-ph img, .band-media img, .tiles img, .brand img { transition-duration: 1ms; transition-delay: 0ms; }
   .btn, .add, .tab, .seg button, .drawer-panel, .sheet-panel, .drawer-back, .sheet-back, .card { transition-duration: 0ms; }

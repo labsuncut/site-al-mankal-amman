@@ -488,22 +488,26 @@
   const onScroll = () => body.classList.toggle('scrolled', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  // ---------- the mankal in the hero: the fire film and the sparks run only while the brazier is on screen and after the curtain; a hand or a finger on it fans the coals ----------
+  // ---------- the hero film: the skewer loop and the small fire run only while the panel is on screen and after the curtain; a hand or a finger on it fans the coals ----------
   const mk = $('#hero-mankal');
   let wakeMankal = () => {};
   if (mk) {
-    const vid = $('#mankal-flame', mk), sp = $('#mankal-sparks', mk);
-    const src = vid.canPlayType('video/mp4; codecs="avc1.4d401e"') ? (innerWidth < 700 ? 'assets/video/flame-sm.mp4' : 'assets/video/flame.mp4') : 'assets/video/flame.webm';
+    const film = $('#mankal-film', mk), vid = $('#mankal-flame', mk), sp = $('#mankal-sparks', mk);
+    const h264 = vid.canPlayType('video/mp4; codecs="avc1.4d401e"');
+    const filmSrc = h264 ? 'assets/video/skewer.mp4' : 'assets/video/skewer.webm';
+    const src = h264 ? (innerWidth < 700 ? 'assets/video/flame-sm.mp4' : 'assets/video/flame.mp4') : 'assets/video/flame.webm';
     let sparks = null, on = false, seen = false, lit = false, fanT = 0;
+    const play = (v) => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
     const start = () => {
       if (on || !seen || !lit || reduce) return; on = true;
+      if (!film.src) film.src = filmSrc;
       if (!vid.src) vid.src = src;
-      const p = vid.play(); if (p && p.catch) p.catch(() => {});
-      if (!sparks) { const r = mk.getBoundingClientRect(); sparks = flame(sp, r.width / 2, r.top + r.height * .86, r.top + r.height * .3, true); }
+      play(film); play(vid);
+      if (!sparks) { const r = mk.getBoundingClientRect(); sparks = flame(sp, r.width / 2, r.top + r.height * .9, r.top + r.height * .45, true); }
       sparks.start();
     };
-    const stop = () => { if (!on) return; on = false; vid.pause(); if (sparks) sparks.stop(); };
-    const fan = () => { if (!on) return; mk.classList.add('fan'); vid.playbackRate = 1.6; if (sparks && sparks.burst) sparks.burst(14); clearTimeout(fanT); fanT = setTimeout(() => { mk.classList.remove('fan'); vid.playbackRate = 1; }, 900); };
+    const stop = () => { if (!on) return; on = false; film.pause(); vid.pause(); if (sparks) sparks.stop(); };
+    const fan = () => { if (!on) return; mk.classList.add('fan'); vid.playbackRate = 1.6; if (sparks && sparks.burst) sparks.burst(12); clearTimeout(fanT); fanT = setTimeout(() => { mk.classList.remove('fan'); vid.playbackRate = 1; }, 900); };
     new IntersectionObserver((es) => es.forEach((e) => { seen = e.isIntersecting; seen ? start() : stop(); }), { threshold: .15 }).observe(mk);
     wakeMankal = () => { lit = true; start(); setTimeout(fan, 1150); };
     mk.addEventListener('pointerenter', fan); mk.addEventListener('pointerdown', fan);
