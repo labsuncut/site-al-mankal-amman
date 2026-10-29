@@ -5,23 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- PREVIEW: noindex until Saif Khuffash approves the site. Remove this tag, the Disallow in robots.txt and X-Robots-Tag in _headers at launch. -->
   <meta name="robots" content="noindex, nofollow">
-  <title>Al Mankal Chicken Tikka | On the coals since 1985, Amman</title>
-  <meta name="description" content="Al Mankal Chicken Tikka: chicken grilled over real charcoal in Amman since 1985. Fill your basket and order for delivery or pickup from the Gardens and Sweifieh branches.">
-  <meta name="theme-color" content="#0c0a09">
+  <title>Al Mankal Chicken Tikka | Order charcoal chicken in Amman</title>
+  <meta name="description" content="Al Mankal Chicken Tikka: chicken tikka, kebab and tawook over real charcoal in Amman since 1985. Pick delivery or pickup, fill your basket, and order from Gardens or Sweifieh.">
+  <meta name="theme-color" content="#FBF6EC">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/fonts/alfa-slab-one-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/lalezar-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/barlow-condensed-latin-800.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/rubik-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/fraunces-latin-400-italic.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/fonts.css?v=3">
-  <link rel="stylesheet" href="assets/css/site.css?v=3">
-  <script src="assets/js/lang.js?v=3"></script>
+  <link rel="stylesheet" href="assets/css/site.css?v=4">
+  <script src="assets/js/lang.js?v=4"></script>
+  <link rel="preload" as="image" href="assets/img/s/logo-760.webp">
+  <link rel="preload" as="image" type="image/avif" imagesrcset="assets/img/s/spread-marble-480.avif 480w, assets/img/s/spread-marble-800.avif 800w, assets/img/s/spread-marble-1080.avif 1080w" imagesizes="(min-width: 900px) 50vw, 100vw">
   <meta property="og:title" content="Al Mankal Chicken Tikka | On the coals since 1985">
   <meta property="og:description" content="Chicken tikka grilled over real coals in Amman since 1985. Order from Gardens or Sweifieh.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="ar_JO">
-  <link rel="preload" href="assets/img/logo.png" as="image">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -30,7 +28,6 @@
     "alternateName": "المنقل تشكن تكا",
     "servesCuisine": ["Chicken tikka", "Grill", "Middle Eastern"],
     "telephone": "+96265540555",
-    "priceRange": "JOD",
     "foundingDate": "1985",
     "address": { "@type": "PostalAddress", "streetAddress": "Wasfi Al Tal Street", "addressLocality": "Amman", "addressCountry": "JO" },
     "hasMenu": "menu.html",
@@ -39,189 +36,173 @@
   </script>
 </head>
 <body data-page="home">
-  <!-- The entry: the logo burns in from the bottom up, then the curtain lifts onto the grill. Once per tab. -->
+  <!-- The entry: the logo burns in from the bottom up, then the curtain lifts and the page assembles. Once per tab. -->
   <div class="intro" id="intro" aria-hidden="true">
     <div class="intro-stage">
-      <div class="intro-logo"><img src="assets/img/logo.png" alt="" width="900" height="800" decoding="sync" fetchpriority="high"><span class="cover"><i class="heat"></i></span></div>
+      <div class="intro-logo"><img src="assets/img/s/logo-760.webp" alt="" width="760" height="760" decoding="sync" fetchpriority="high"><span class="cover"><i class="heat"></i></span></div>
       <p class="intro-line" data-t="intro_line">On the coals since 1985</p>
     </div>
-    <i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i>
+    <i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i>
   </div>
-  <header class="site-header">
-    <div class="wrap header-row">
-      <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home"><img src="assets/img/logo-small.png" alt="" width="62" height="55" decoding="async"></a>
-      <nav class="nav" id="nav" aria-label="Site">
+  <header class="head">
+    <a class="skip" href="#menu" data-t="skip">Skip to the menu</a>
+    <div class="wrap head-row">
+      <a class="brand" href="./" aria-label="Al Mankal Chicken Tikka, home">
+        <img src="assets/img/s/logo-124.webp" alt="" width="124" height="124">
+        <span><b data-t="brand">Al Mankal</b><small data-t="brand_sub">Chicken tikka · Amman</small></span>
+      </a>
+      <nav class="head-nav" aria-label="Site">
         <a href="menu.html" data-t="nav_menu">Menu</a>
         <a href="branches.html" data-t="nav_branches">Branches</a>
         <a href="franchise.html" data-t="nav_franchise">Franchising</a>
         <a href="index.html#story" data-t="nav_story">Story</a>
-        <button class="lang" id="lang" type="button" data-t="lang_btn">عربي</button>
-        <a class="btn btn-ember btn-small" href="menu.html" data-t="nav_order">Order now</a>
       </nav>
-      <div class="header-tools">
-        <button class="basket-btn" id="basket-btn" type="button" aria-label="Basket" data-t-aria="nav_basket" aria-haspopup="dialog" aria-controls="basket">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18l-1.6 9.2a2 2 0 0 1-2 1.8H6.6a2 2 0 0 1-2-1.8L3 10z"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          <span class="badge" id="basket-count" hidden>0</span>
-        </button>
-        <button class="burger" id="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menu"><span></span><span></span><span></span></button>
-      </div>
+      <button class="lang" id="lang" type="button" data-t="lang_btn">عربي</button>
+      <button class="basket-btn" id="basket-btn" type="button" aria-label="Basket" data-t-aria="nav_basket" aria-haspopup="dialog" aria-controls="basket">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18l-1.6 9.2a2 2 0 0 1-2 1.8H6.6a2 2 0 0 1-2-1.8L3 10z"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span class="badge" id="basket-count" hidden>0</span>
+      </button>
     </div>
   </header>
 
   <main>
-    <div class="hero-scene">
-      <section class="hero" aria-label="Al Mankal Chicken Tikka">
-        <div class="hero-media" aria-hidden="true">
-          <video id="hero-video" muted loop playsinline autoplay preload="metadata" poster="assets/img/grill-wide.jpg"></video>
-          <div class="hero-shade"></div>
-        </div>
-        <canvas id="embers" aria-hidden="true"></canvas>
-        <div class="hero-in" id="hero-in">
-          <div class="hero-logo rise" id="hero-logo"><img src="assets/img/logo.png" alt="Al Mankal Chicken Tikka" width="900" height="800" decoding="async"></div>
-          <p class="eyebrow rise" data-t="hero_eyebrow">Gardens · Sweifieh · Amman</p>
-          <h1 class="display rise" id="hero-title" data-t="hero_title">On the coals since 1985</h1>
-          <p class="lead rise" data-t="hero_lead">Whole chickens, tikka pieces and kebab over real charcoal, with puffed puri bread and garlic. Two branches in Amman.</p>
-          <div class="hero-cta rise">
-            <a class="btn btn-ember" href="menu.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3 4 4 4 8a4 4 0 0 1-8 0c0-2 1-3 1-3s1 2 2 2c0-3-1-5 1-7z"/><path d="M5 21h14"/></svg><span data-t="hero_order">Order now</span></a>
-            <button class="btn btn-bone" type="button" data-call data-t="hero_call">Call a branch</button>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div class="hero-photo">
+          <div class="ph">
+            <picture>
+              <source type="image/avif" srcset="assets/img/s/spread-marble-480.avif 480w, assets/img/s/spread-marble-800.avif 800w, assets/img/s/spread-marble-1080.avif 1080w" sizes="(min-width: 900px) 50vw, 100vw">
+              <source type="image/webp" srcset="assets/img/s/spread-marble-480.webp 480w, assets/img/s/spread-marble-800.webp 800w, assets/img/s/spread-marble-1080.webp 1080w" sizes="(min-width: 900px) 50vw, 100vw">
+              <img src="assets/img/s/spread-marble-800.webp" alt="A table of Al Mankal chicken tikka, kebab skewers, puri bread, hummus and garlic dip, seen from above" data-t-alt="hero_alt" width="1080" height="999" fetchpriority="high">
+            </picture>
           </div>
-          <p class="ticket rise"><span data-t="tag_1">Healthy</span><i></i><span data-t="tag_2">Charcoal</span><i></i><span data-t="tag_3">Since 1985</span></p>
         </div>
-        <div class="hero-hint rise" aria-hidden="true"><span data-t="hero_hint">Scroll</span><i class="drip"></i></div>
-      </section>
-    </div>
+        <div class="hero-text">
+          <p class="eyebrow rise r1" data-t="hero_eyebrow">Gardens · Sweifieh · Amman</p>
+          <h1 class="display rise r2" id="hero-title" data-t="hero_title">On the coals since 1985</h1>
+          <p class="hero-lead rise r3" data-t="lead">Chicken tikka, kebab and tawook over real charcoal, with puri bread and garlic.</p>
 
-    <section class="chapter on-cream" id="plates-chapter" aria-labelledby="sig-title">
-      <div class="wrap">
-        <div class="head centre ap">
-          <div class="skewer"></div>
-          <p class="eyebrow" data-t="sig_eyebrow">Off the grill</p>
-          <h2 class="display title" id="sig-title" data-t="sig_title">The plates Amman comes back for</h2>
-          <p class="lead" data-t="sig_lead">Add what you want to your basket. Checkout is one tap away.</p>
+          <form class="order-card rise r4" id="order-card" action="#menu" aria-labelledby="oc-title">
+            <h2 id="oc-title" data-t="how">How do you want it?</h2>
+            <div class="seg-row">
+              <div class="seg" role="group" aria-label="Delivery or pickup" data-t-aria="mode_aria">
+                <button type="button" data-mode="delivery" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span data-t="delivery">Delivery</span></button>
+                <button type="button" data-mode="pickup" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span data-t="pickup">Pickup</span></button>
+              </div>
+              <p class="seg-label" id="from-label" data-t="from">From</p>
+              <div class="seg" role="group" aria-labelledby="from-label">
+                <button type="button" data-branch="gardens" aria-pressed="true" data-t="br_gardens">Gardens</button>
+                <button type="button" data-branch="sweifieh" aria-pressed="false" data-t="br_sweifieh">Sweifieh</button>
+              </div>
+            </div>
+            <div class="order-go">
+              <button class="btn btn-red" type="submit"><span data-t="start">Start my order</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></button>
+              <button class="btn btn-line" type="button" data-call data-t="call">Call</button>
+            </div>
+            <p class="note" data-t="mode_note">Address, phone and payment are confirmed on Al Mankal's own order page.</p>
+          </form>
         </div>
-        <div class="plates" id="plates"></div>
-        <p class="plates-cta"><a class="btn btn-ink" href="menu.html" data-t="sig_all">See the full menu</a></p>
       </div>
     </section>
 
-    <section class="chapter on-dark film-chapter" aria-labelledby="film-title">
+    <section class="menu" id="menu" aria-labelledby="menu-title">
       <div class="wrap">
-        <div class="head centre ap">
-          <div class="skewer"></div>
-          <p class="eyebrow" data-t="film_eyebrow">The mankal</p>
-          <h2 class="display title" id="film-title" data-t="film_title">Four things that never change</h2>
+        <div class="again" id="again" hidden></div>
+        <div class="menu-head">
+          <div>
+            <p class="eyebrow" data-t="menu_eyebrow">The menu</p>
+            <h2 class="display title" id="menu-title" data-t="menu_title">What's on the coals today?</h2>
+          </div>
+          <p class="note" id="menu-for"></p>
         </div>
-      </div>
-      <div class="film">
-        <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/coals-2.jpg" alt="" loading="lazy" decoding="async"></div>
-          <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_1_w">Coals</p><h3 class="display" data-t="film_1_t">Charcoal, not gas</h3><p class="copy" data-t="film_1_p">Every piece of chicken at Al Mankal goes over live charcoal. The smoke is the seasoning, and it has been since 1985.</p></div>
-        </article>
-        <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/grill-rows.jpg" alt="" loading="lazy" decoding="async"></div>
-          <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_2_w">Chicken</p><h3 class="display" data-t="film_2_t">Split flat, grilled until it chars</h3><p class="copy" data-t="film_2_p">Whole chickens cut and pressed on the grate, sold by the piece: a quarter, a half, or a tray for the family.</p></div>
-        </article>
-        <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/puri.jpg" alt="" loading="lazy" decoding="async"></div>
-          <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_3_w">Puri</p><h3 class="display" data-t="film_3_t">Bread that puffs in hot oil</h3><p class="copy" data-t="film_3_p">A thin dough dropped in the fryer until it balloons. Every sandwich is wrapped in it and every meal comes with it.</p></div>
-        </article>
-        <article class="frame">
-          <div class="frame-media"><img src="assets/img/ig/tray-hands.jpg" alt="" loading="lazy" decoding="async"></div>
-          <div class="frame-text"><p class="frame-word" aria-hidden="true" data-t="film_4_w">Sides</p><h3 class="display" data-t="film_4_t">Garlic, pickles, rice</h3><p class="copy" data-t="film_4_p">Garlic dip, hummus, Turkish salad and biryani rice with curry sauce. The table is not complete without them.</p></div>
-        </article>
+        <div class="rail-wrap">
+          <div class="rail" id="rail" role="tablist" aria-label="Menu categories" data-t-aria="rail_aria"></div>
+        </div>
+        <div class="grid" id="grid" role="tabpanel"></div>
+        <div class="menu-foot">
+          <a class="btn btn-line" href="menu.html" data-t="full_menu">Full menu with search</a>
+          <p class="note" data-t="photo_note">Photos are Al Mankal's own. Dishes without one yet show the logo.</p>
+        </div>
       </div>
     </section>
 
-    <section class="chapter on-cream reels-chapter" aria-labelledby="reels-title">
+    <section class="fire" aria-labelledby="fire-title">
+      <div class="fire-media" aria-hidden="true"><video id="fire-video" muted loop playsinline preload="none"></video></div>
+      <canvas aria-hidden="true"></canvas>
       <div class="wrap">
-        <div class="head centre ap">
-          <div class="skewer"></div>
-          <p class="eyebrow" data-t="reels_eyebrow">From the kitchen</p>
-          <h2 class="display title" id="reels-title" data-t="reels_title">See it before you taste it</h2>
-          <p class="lead" data-t="reels_lead">The restaurant's own reels: the grill, the trays, the dining room.</p>
-        </div>
-      </div>
-      <div class="reels" id="reels"></div>
-      <p class="centre reels-cta"><a class="btn btn-ink" id="follow" href="https://www.facebook.com/ALMANKAL" target="_blank" rel="noopener" data-t="reels_follow">Follow Al Mankal</a></p>
-    </section>
-
-    <section class="chapter on-dark" id="how" aria-labelledby="how-title">
-      <div class="wrap">
-        <div class="head centre ap">
-          <div class="skewer"></div>
-          <p class="eyebrow" data-t="how_eyebrow">Ordering</p>
-          <h2 class="display title" id="how-title" data-t="how_title">Basket, checkout, done</h2>
-        </div>
-        <div class="steps">
-          <div class="step ap d1"><span class="n">1</span><h3 class="display" data-t="step_1_t">Pick your branch</h3><p data-t="step_1_p">Gardens or Sweifieh. Delivery or pickup.</p></div>
-          <div class="step ap d2"><span class="n">2</span><h3 class="display" data-t="step_2_t">Fill your basket</h3><p data-t="step_2_p">Every dish with its photo and price, right here.</p></div>
-          <div class="step ap d3"><span class="n">3</span><h3 class="display" data-t="step_3_t">Checkout and pay cash</h3><p data-t="step_3_p">Checkout opens the restaurant's secure order page. Pay cash when it arrives.</p></div>
-        </div>
-        <p class="centre"><a class="btn btn-ember" href="menu.html" data-t="how_cta">Start an order</a></p>
+        <p class="eyebrow ap" data-t="film_eyebrow">The mankal</p>
+        <h2 class="display" id="fire-title" data-t="film_title" data-split>Charcoal, not gas</h2>
+        <ul class="truths">
+          <li class="ap d1"><b data-t="film_1_w">Coals</b><p data-t="film_1_p">Every piece of chicken at Al Mankal goes over live charcoal. The smoke is the seasoning, and it has been since 1985.</p></li>
+          <li class="ap d2"><b data-t="film_2_w">Chicken</b><p data-t="film_2_p">Whole chickens cut and pressed on the grate, sold by the piece: a quarter, a half, or a tray for the family.</p></li>
+          <li class="ap d3"><b data-t="film_3_w">Puri</b><p data-t="film_3_p">A thin dough dropped in the fryer until it balloons. Every sandwich is wrapped in it and every meal comes with it.</p></li>
+          <li class="ap d4"><b data-t="film_4_w">Sides</b><p data-t="film_4_p">Garlic dip, hummus, Turkish salad and biryani rice with curry sauce. The table is not complete without them.</p></li>
+        </ul>
       </div>
     </section>
 
-    <section class="chapter on-coal" id="branches" aria-labelledby="br-title">
+    <section class="reels-sec" aria-labelledby="reels-title">
       <div class="wrap">
-        <div class="head centre ap">
-          <div class="skewer"></div>
-          <p class="eyebrow" data-t="br_eyebrow">Branches</p>
-          <h2 class="display title" id="br-title" data-t="br_title">Two grills in Amman</h2>
-        </div>
-        <div class="inside ap">
-          <figure><img src="assets/img/ig/storefront-m.jpg" alt="" loading="lazy" decoding="async"></figure>
-          <figure><img src="assets/img/ig/dining-1-m.jpg" alt="" loading="lazy" decoding="async"></figure>
-          <figure><img src="assets/img/ig/dining-2-m.jpg" alt="" loading="lazy" decoding="async"></figure>
-          <figcaption class="note" data-t="br_inside">Inside Al Mankal</figcaption>
-        </div>
-        <div class="branches">
-          <div class="branch ap d1">
+        <p class="eyebrow ap" data-t="reels_eyebrow">From the kitchen</p>
+        <h2 class="display title ap d1" id="reels-title" data-t="reels_title">See it before you taste it</h2>
+        <p class="lead ap d2" data-t="reels_lead">The restaurant's own reels: the grill, the trays, the dining room.</p>
+        <div class="reels" id="reels"></div>
+        <p class="reels-cta ap"><a class="btn btn-line" id="follow" href="https://www.facebook.com/ALMANKAL" target="_blank" rel="noopener" data-t="reels_follow">Follow Al Mankal</a></p>
+      </div>
+    </section>
+
+    <section class="branches" id="branches" aria-labelledby="br-title">
+      <div class="wrap">
+        <p class="eyebrow ap" data-t="br_eyebrow">Branches</p>
+        <h2 class="display title ap d1" id="br-title" data-t="br_title">Two grills in Amman</h2>
+        <div class="br-grid">
+          <article class="br ap" id="gardens">
             <h3 class="display" data-t="br_gardens">Gardens</h3>
             <p class="addr" data-t="br_gardens_addr">Wasfi Al Tal Street</p>
-            <a class="phone" href="tel:+96265540555">06 554 0555</a>
-            <div class="actions">
-              <a class="btn btn-ember btn-small" href="menu.html" data-branch-pick="gardens" data-t="br_order">Order from here</a>
-              <a class="btn btn-bone btn-small" href="tel:+96265540555" data-t="br_call">Call</a>
-              <a class="btn btn-bone btn-small" href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a>
+            <p class="hours tbc" data-hours="gardens"><i></i><span data-t="hours_tbc">Opening hours: to confirm</span></p>
+            <a class="tel" dir="ltr" href="tel:+96265540555">06 554 0555</a>
+            <div class="acts">
+              <a class="btn btn-red btn-small" href="#menu" data-pick="gardens" data-t="br_order">Order from here</a>
+              <a class="btn btn-line btn-small" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a>
             </div>
-          </div>
-          <div class="branch ap d2">
+          </article>
+          <article class="br ap" id="sweifieh">
             <h3 class="display" data-t="br_sweifieh">Sweifieh</h3>
             <p class="addr" data-t="br_sweifieh_addr">Ali Al Sarayreh Street</p>
-            <a class="phone" href="tel:+96265540555">06 554 0555</a>
-            <div class="actions">
-              <a class="btn btn-ember btn-small" href="menu.html" data-branch-pick="sweifieh" data-t="br_order">Order from here</a>
-              <a class="btn btn-bone btn-small" href="tel:+96265540555" data-t="br_call">Call</a>
-              <a class="btn btn-bone btn-small" href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a>
+            <p class="hours tbc" data-hours="sweifieh"><i></i><span data-t="hours_tbc">Opening hours: to confirm</span></p>
+            <a class="tel" dir="ltr" href="tel:+96265540555">06 554 0555</a>
+            <div class="acts">
+              <a class="btn btn-red btn-small" href="#menu" data-pick="sweifieh" data-t="br_order">Order from here</a>
+              <a class="btn btn-line btn-small" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a>
             </div>
-          </div>
+          </article>
         </div>
-        <p class="branches-cta"><a class="btn btn-bone" href="branches.html" data-t="br_all">All branch details</a></p>
+        <p class="ap" style="margin-top:16px"><a class="btn btn-line" href="branches.html" data-t="br_all">All branch details</a></p>
       </div>
     </section>
 
-    <section class="chapter on-cream" id="story" aria-labelledby="st-title">
+    <section class="story" id="story" aria-labelledby="st-title">
       <div class="wrap">
-        <div class="story">
-          <div class="year ap" aria-hidden="true">1985<span data-t="st_eyebrow">The story</span></div>
+        <div class="story-in">
+          <p class="year" aria-hidden="true" data-count="1985">1985</p>
           <div>
             <p class="eyebrow ap" data-t="st_eyebrow">The story</p>
-            <h2 class="display title ap d1" id="st-title" data-t="st_title">It started with one grill</h2>
-            <p class="copy ap d2" data-t="st_p1">In 1985 a charcoal grill was lit in Amman and the first chicken tikka went on it. The smoke drew a queue, and the queue never really left.</p>
-            <p class="copy ap d3" data-t="st_p2">Forty-one years later the coals are still lit the same way, in two branches, for the same city.</p>
-            <p class="ap d4"><span class="draft" data-t="st_draft">Draft: the real story will be written with the family.</span></p>
+            <h2 class="display ap d1" id="st-title" data-t="st_title">It started with one grill</h2>
+            <p class="ap d2" data-t="st_p1">In 1985 a charcoal grill was lit in Amman and the first chicken tikka went on it. The smoke drew a queue, and the queue never really left.</p>
+            <p class="ap d3" data-t="st_p2">Forty-one years later the coals are still lit the same way, in two branches, for the same city.</p>
+            <span class="draft ap d4" data-t="st_draft">Draft: the real story will be written with the family.</span>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="chapter band" aria-labelledby="fr-title">
-      <div class="band-media" aria-hidden="true"><img src="assets/img/ig/spread-teal.jpg" alt="" loading="lazy" decoding="async"></div>
+    <section class="band" aria-labelledby="fr-title">
+      <div class="band-media" aria-hidden="true"><picture><source type="image/avif" srcset="assets/img/s/spread-teal-480.avif 480w, assets/img/s/spread-teal-960.avif 960w, assets/img/s/spread-teal-1080.avif 1080w" sizes="100vw"><source type="image/webp" srcset="assets/img/s/spread-teal-480.webp 480w, assets/img/s/spread-teal-960.webp 960w, assets/img/s/spread-teal-1080.webp 1080w" sizes="100vw"><img src="assets/img/s/spread-teal-480.webp" alt="" width="1080" height="999" loading="lazy" decoding="async"></picture></div>
       <div class="wrap">
         <p class="eyebrow ap" data-t="fr_eyebrow">Franchising</p>
-        <h2 class="display title ap d1" id="fr-title" data-t="fr_title">Carry the fire</h2>
+        <h2 class="display ap d1" id="fr-title" data-t="fr_title">Carry the fire</h2>
         <p class="lead ap d2" data-t="fr_lead">Al Mankal is looking for partners who want to bring charcoal tikka to their own corner of the map.</p>
-        <p class="ap d3"><a class="btn btn-ember" href="franchise.html" data-t="fr_cta">Talk to us about a franchise</a></p>
+        <p class="ap d3"><a class="btn btn-red" href="franchise.html" data-t="fr_cta">Talk to us about a franchise</a></p>
       </div>
     </section>
   </main>
@@ -230,76 +211,75 @@
     <div class="wrap">
       <div class="foot-grid">
         <div>
-          <a class="logo" href="./" aria-label="Al Mankal Chicken Tikka, home"><img src="assets/img/logo-small.png" alt="" width="90" height="80" loading="lazy" decoding="async"></a>
-          <p class="note" style="margin-top:14px" data-t="ft_order_note">Checkout and payment run on the restaurant's own order page.</p>
+          <a class="brand" href="./" aria-label="Al Mankal Chicken Tikka, home"><img src="assets/img/s/logo-124.webp" alt="" width="124" height="124" loading="lazy" decoding="async"><span><b data-t="brand">Al Mankal</b><small data-t="brand_sub">Chicken tikka · Amman</small></span></a>
+          <p class="note" style="color:inherit" data-t="ft_order_note">Checkout and payment run on the restaurant's own order page.</p>
           <p><a href="https://www.facebook.com/ALMANKAL" target="_blank" rel="noopener">Facebook</a></p>
         </div>
         <div>
-          <h4 data-t="br_gardens">Gardens</h4>
+          <h2 data-t="br_gardens">Gardens</h2>
           <ul>
             <li data-t="br_gardens_addr">Wasfi Al Tal Street</li>
-            <li><a class="phone" href="tel:+96265540555">06 554 0555</a></li>
-            <li><a href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></li>
+            <li><a dir="ltr" href="tel:+96265540555">06 554 0555</a></li>
+            <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></li>
           </ul>
         </div>
         <div>
-          <h4 data-t="br_sweifieh">Sweifieh</h4>
+          <h2 data-t="br_sweifieh">Sweifieh</h2>
           <ul>
             <li data-t="br_sweifieh_addr">Ali Al Sarayreh Street</li>
-            <li><a class="phone" href="tel:+96265540555">06 554 0555</a></li>
-            <li><a href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></li>
+            <li><a dir="ltr" href="tel:+96265540555">06 554 0555</a></li>
+            <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></li>
           </ul>
         </div>
       </div>
       <div class="foot-bottom">
         <span>© 2026 Al Mankal Chicken Tikka</span>
-        <span data-t="ft_made">Website by FellowFlow</span>
+        <span data-t="ft_made">Powered by FellowFlow</span>
         <span class="pill" data-t="ft_preview">Preview, not yet public</span>
       </div>
     </div>
   </footer>
-  <div class="call-bar" aria-label="Quick actions">
-    <button class="btn btn-ember" id="bar-basket" type="button"><span data-t="bar_order">Order now</span><span class="bar-count" id="bar-count" hidden>0</span></button>
-    <button class="btn btn-bone" type="button" data-call data-t="bar_call">Call</button>
-  </div>
 
-  <!-- Which branch? Every Call button opens this sheet: both branches share one number. -->
+  <nav class="bar" aria-label="Quick actions" data-t-aria="bar_aria">
+    <button type="button" id="bar-menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span data-t="nav_menu">Menu</span></button>
+    <button type="button" class="bar-basket" id="bar-basket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18l-1.6 9.2a2 2 0 0 1-2 1.8H6.6a2 2 0 0 1-2-1.8L3 10z"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span id="bar-label" data-t="bar_basket">Basket</span><span class="bar-total" id="bar-total" hidden></span></button>
+    <button type="button" data-call><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span data-t="call">Call</span></button>
+  </nav>
+
+  <!-- Which branch? Every Call button opens this sheet. CONFIRM: both branches on one number (the old site banner shows 06 553 1886). -->
   <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
     <div class="sheet-back" data-close-sheet></div>
     <div class="sheet-panel">
-      <div class="sheet-grip" aria-hidden="true"></div>
       <h2 class="display" id="sheet-title" data-t="sheet_title">Which branch?</h2>
       <p class="note" data-t="sheet_lead">Both branches answer on the same number.</p>
-      <div class="sheet-branches">
-        <div class="sb">
-          <b class="display" data-t="br_gardens">Gardens</b><span data-t="br_gardens_addr">Wasfi Al Tal Street</span>
-          <div class="actions"><a class="btn btn-ember btn-small" href="tel:+96265540555" data-t="sheet_call">Call 06 554 0555</a><a class="btn btn-bone btn-small" href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></div>
-        </div>
-        <div class="sb">
-          <b class="display" data-t="br_sweifieh">Sweifieh</b><span data-t="br_sweifieh_addr">Ali Al Sarayreh Street</span>
-          <div class="actions"><a class="btn btn-ember btn-small" href="tel:+96265540555" data-t="sheet_call">Call 06 554 0555</a><a class="btn btn-bone btn-small" href="https://www.google.com/maps/search/?api=1&query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></div>
-        </div>
+      <div class="sb">
+        <b data-t="br_gardens">Gardens</b><span class="note" data-t="br_gardens_addr">Wasfi Al Tal Street</span>
+        <div class="acts"><a class="btn btn-red btn-small" href="tel:+96265540555"><span data-t="call">Call</span> <bdi dir="ltr">06 554 0555</bdi></a><a class="btn btn-line btn-small" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Mankal+Chicken+Tikka+Wasfi+Al+Tal+Street+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></div>
       </div>
-      <button class="x" type="button" data-close-sheet aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div class="sb">
+        <b data-t="br_sweifieh">Sweifieh</b><span class="note" data-t="br_sweifieh_addr">Ali Al Sarayreh Street</span>
+        <div class="acts"><a class="btn btn-red btn-small" href="tel:+96265540555"><span data-t="call">Call</span> <bdi dir="ltr">06 554 0555</bdi></a><a class="btn btn-line btn-small" href="https://www.google.com/maps/search/?api=1&amp;query=Al+Mankal+Chicken+Tikka+Ali+Al+Sarayreh+Street+Sweifieh+Amman" target="_blank" rel="noopener" data-t="br_dir">Directions</a></div>
+      </div>
+      <button class="x" type="button" data-close-sheet aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
   </div>
 
-  <!-- The basket: lives in localStorage, rendered by site.js. Checkout hands over to the restaurant's order page. -->
+  <!-- The basket: lives in localStorage, rendered by site.js. Checkout hands over to the restaurant's MakanE order page. -->
   <div class="drawer" id="basket" role="dialog" aria-modal="true" aria-labelledby="bk-title" hidden>
     <div class="drawer-back" data-close-basket></div>
     <aside class="drawer-panel">
       <header class="drawer-head">
         <h2 class="display" id="bk-title" data-t="bk_title">Your basket</h2>
         <span class="drawer-count" id="bk-count"></span>
-        <button class="x" type="button" data-close-basket aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <button class="x" type="button" data-close-basket aria-label="Close" data-t-aria="close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </header>
       <div class="drawer-body" id="bk-body"></div>
       <footer class="drawer-foot" id="bk-foot"></footer>
     </aside>
   </div>
 
-  <script src="assets/js/content.js?v=3"></script>
-  <script src="assets/js/menu-data.js?v=3"></script>
-  <script src="assets/js/site.js?v=3"></script>
+  <script src="assets/js/content.js?v=4"></script>
+  <script src="assets/js/menu-data.js?v=4"></script>
+  <script src="assets/js/site.js?v=4"></script>
 </body>
 </html>
