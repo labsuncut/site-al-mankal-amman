@@ -160,12 +160,15 @@ html[lang="ar"] .brand small { text-transform: none; letter-spacing: 0; font-siz
 
 /* ---------- home hero: the mankal itself (the brazier the restaurant is named after), and the first step of an order. It assembles when the curtain lifts. ---------- */
 .hero { padding: 0 0 36px; overflow: hidden; }
-.hero-grid { display: grid; gap: 22px; }
+.hero-grid { display: grid; gap: 0; }
 .hero-photo { position: relative; margin: 0 calc(var(--gutter) * -1); }
 @keyframes drift { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.06) translate(-1.2%, 1%); } }
 /* The brazier: charcoal body and rim drawn in the page's own black, the real coals from the grill film in the bowl (three frames cross-fading, so the flicker is the film's own),
    a fire film rendered as a volume (assets/video/flame-*.mp4) screen-blended over the coals, the front half of the rim over the fire's base, live sparks on a canvas, and the name written in ember above. */
-.mankal { position: relative; overflow: hidden; isolation: isolate; aspect-ratio: 10 / 9; max-height: 400px; background: #0b0806; }
+.mankal { position: relative; overflow: hidden; isolation: isolate; aspect-ratio: 10 / 10.4; max-height: 440px; background: #0b0806; }
+/* On the phone the charcoal dissolves into the page and the headline rises up into that fade, so the picture and the words are one piece. */
+.mankal .fade { inset: 0; z-index: 4; background: linear-gradient(180deg, transparent 50%, rgba(251, 246, 236, .7) 78%, var(--cream) 100%); pointer-events: none; }
+.hero-text { margin-top: -27%; }
 .mankal > * { position: absolute; }
 .mankal .coals { inset: 0; }
 .mankal .coals img { width: 100%; height: 100%; object-fit: cover; object-position: 56% 50%; display: block; filter: saturate(.95) brightness(.92) contrast(1.06); }
@@ -185,9 +188,10 @@ body.lit .mankal .word small { animation: fade-in 600ms ease 2500ms forwards; }
 .mankal.fan .flame { transform: scaleY(1.08); transition-duration: 350ms; }
 .mankal .sparks { inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 .hero-text { position: relative; }
-.hero h1 { font-size: clamp(3rem, 2.2rem + 4.2vw, 6.2rem); max-width: 9ch; }
+.hero h1 { font-size: clamp(3.3rem, 2.2rem + 4.6vw, 6.2rem); max-width: 9ch; line-height: .9; letter-spacing: .005em; }
+.hero h1 .lit { text-shadow: 0 6px 22px rgba(255, 122, 26, .22); }
 html[lang="ar"] .hero h1 { font-size: clamp(2.6rem, 2rem + 3.6vw, 5.2rem); max-width: 11ch; }
-.hero-lead { font-size: 1.08rem; margin: 14px 0 0; max-width: 36ch; color: var(--muted); }
+.hero-lead { font-size: 1.1rem; line-height: 1.5; margin: 16px 0 0; max-width: 32ch; color: var(--muted); }
 /* The word COALS is cut from charcoal and lit from below: a static ember gradient in the letters, and a brighter copy that breathes on top (opacity only). */
 .hero h1 .lit { position: relative; display: inline-block; }
 .hero h1 .lit i { font-style: normal; position: relative; display: inline-block; color: transparent; background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 52%, #4a1d10 70%, #8c2e12 86%, #c2521a 100%); -webkit-background-clip: text; background-clip: text; }
@@ -242,10 +246,13 @@ body.lit .hero .rise.r1 { animation-delay: 120ms; } body.lit .hero .rise.r2 { an
 @keyframes settle-photo { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: scale(1.001); } }
 @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @media (min-width: 900px) {
-  .hero { padding: 36px 0 64px; }
-  .hero-grid { grid-template-columns: 1fr 1.05fr; align-items: center; gap: 48px; }
+  .hero { padding: 40px 0 64px; }
+  .hero-grid { grid-template-columns: 1fr 1fr; align-items: center; gap: 56px; }
+  .hero-text { margin-top: 0; }
+  .mankal .fade { display: none; }
+  .hero h1 { max-width: 8ch; }
   .hero-photo { margin: 0; order: 2; }
-  .mankal { border-radius: 28px; aspect-ratio: 10 / 9; max-height: 440px; margin-inline: auto; width: 100%; }
+  .mankal { border-radius: 28px; aspect-ratio: 10 / 10; max-height: 520px; margin-inline: auto; width: 100%; }
 }
 
 /* ---------- order again ---------- */
