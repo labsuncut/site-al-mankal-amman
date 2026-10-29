@@ -128,9 +128,17 @@
   function syncChoices() {
     $$('[data-mode]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.mode === mode)));
     $$('button[data-branch]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.branch === branch)));
-    const f = $('#menu-for'); if (f) f.textContent = t('menu_for', { m: modeName(), b: brName() });
+    const f = $('#menu-for');
+    if (f) {
+      const was = f.dataset.v, now = mode + '|' + branch;
+      f.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span class="txt">${t('menu_for', { m: modeName(), b: `<b>${brName()}</b>` })}<small>${t('for_hint')}</small></span><button type="button" data-for-change>${t('for_change')}</button>`;
+      f.dataset.v = now;
+      if (was && was !== now && !reduce) { f.classList.remove('flash'); void f.offsetWidth; f.classList.add('flash'); }
+    }
   }
   document.addEventListener('click', (e) => {
+    const ch = e.target.closest('[data-for-change]');
+    if (ch) { const tgt = $(ch.closest('#menu-for').dataset.change || '#order-card'); if (tgt) { tgt.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); const b = $('button[data-branch]', tgt); if (b) setTimeout(() => b.focus({ preventScroll: true }), reduce ? 0 : 450); } return; }
     const m = e.target.closest('[data-mode]'), b = e.target.closest('button[data-branch]'), pick = e.target.closest('[data-pick]');
     if (m) setMode(m.dataset.mode);
     if (b) { setBranch(b.dataset.branch); if (b.closest('.drawer')) renderBasket(); }
@@ -375,7 +383,7 @@
     const follow = $('#follow'); if (follow && BUSINESS.instagram) follow.href = BUSINESS.instagram;
   }
 
-  // ---------- reveals: .ap rises once; .fsteps fills its skewer; the year counts up; words in a split heading rise in turn ----------
+  // ---------- reveals: .ap rises once; the year counts up; words in a split heading rise in turn ----------
   const io = hasIO ? new IntersectionObserver((entries) => {
     const batch = entries.filter((en) => en.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left);
     batch.forEach((en, i) => {
@@ -386,7 +394,7 @@
       io.unobserve(el);
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: .08 }) : null;
-  function watch(root) { $$('.ap, .fsteps, [data-count]', root).forEach((el) => { if (el.classList.contains('in')) return; if (io) io.observe(el); else { el.classList.add('in'); if (el.dataset.count) el.textContent = el.dataset.count; } }); }
+  function watch(root) { $$('.ap, [data-count]', root).forEach((el) => { if (el.classList.contains('in')) return; if (io) io.observe(el); else { el.classList.add('in'); if (el.dataset.count) el.textContent = el.dataset.count; } }); }
   function countUp(el) {
     const end = +el.dataset.count, from = end - 60;
     if (reduce) { el.textContent = String(end); return; }
@@ -429,49 +437,37 @@
     }, { once: true });
   }
 
-  // ---------- the fire band: the grill loop and embers, only while on screen ----------
+  // ---------- hero spots: each dish on the table names itself and opens its category; one lights at a time until touched ----------
+  const spots = $$('.hero .spot');
+  if (spots.length) {
+    spots.forEach((s) => { if (parseFloat(s.style.getPropertyValue('--x')) > 58) s.classList.add('flip'); });
+    let k = -1, timer = 0;
+    const next = () => { spots[k]?.classList.remove('live'); k = (k + 1) % spots.length; spots[k].classList.add('live'); };
+    const cycle = () => { if (reduce) { spots[0].classList.add('live'); return; } next(); timer = setInterval(next, 2600); };
+    const stopCycle = () => { if (timer) { clearInterval(timer); timer = 0; spots.forEach((s) => s.classList.remove('live')); } };
+    const begin = () => setTimeout(cycle, body.classList.contains('intro-wait') ? 2600 : 1400);
+    if (body.classList.contains('lit')) begin(); else new MutationObserver((m, o) => { if (body.classList.contains('lit')) { o.disconnect(); begin(); } }).observe(body, { attributes: true, attributeFilter: ['class'] });
+    const ph = $('.hero-photo');
+    ph.addEventListener('pointerenter', stopCycle); ph.addEventListener('touchstart', stopCycle, { passive: true }); ph.addEventListener('focusin', stopCycle);
+    spots.forEach((s) => s.addEventListener('click', () => {
+      stopCycle(); s.classList.add('live');
+      const key = s.dataset.spot; if (TABS.some((x) => x.key === key)) { tab = ''; selectTab(key, false); }
+      $('#menu').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }));
+  }
+
+  // ---------- the fire band: the grill loop, only while on screen (the coals and skewers are CSS) ----------
   const fire = $('.fire');
   if (fire) {
-    const fv = $('#fire-video', fire), canvas = $('canvas', fire);
+    const fv = $('#fire-video', fire);
     const tall = innerWidth / innerHeight < .9, file = tall ? 'grill-tall' : 'grill-wide';
     fv.poster = `assets/img/s/${file}.webp`;
     const src = fv.canPlayType('video/mp4; codecs="avc1.4d401e"') ? `assets/video/${file}.mp4` : `assets/video/${file}.webm`;
-    // Embers: small glowing dots that drift up through the words, more of them when the band first arrives.
-    const ex = canvas.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 1.5), phone = innerWidth < 900;
-    let W = 0, H = 0, embers = [], running = false, last = 0, bellow = 0;
-    const rnd = (a, b) => a + Math.random() * (b - a);
-    function size() { const r = fire.getBoundingClientRect(); W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height)); canvas.width = W * dpr; canvas.height = H * dpr; ex.setTransform(dpr, 0, 0, dpr, 0, 0); }
-    function frame(time) {
-      if (!running) return;
-      const dt = Math.min(48, time - (last || time)); last = time;
-      bellow *= Math.pow(.25, dt / 1000);
-      const rate = (phone ? 8 : 14) + bellow * 40, cap = phone ? 40 : 90;
-      let n = rate * dt / 1000 + (Math.random() < (rate * dt / 1000) % 1 ? 1 : 0);
-      while (n-- >= 1 && embers.length < cap) embers.push({ x: rnd(W * .05, W * .95), y: H + 6, vx: rnd(-.12, .12), vy: -rnd(.4, 1.1), life: 0, max: rnd(2200, 4800), s: rnd(1, 2.4), ph: rnd(0, 6.28), sw: rnd(.6, 1.4) });
-      ex.clearRect(0, 0, W, H);
-      for (let i = embers.length - 1; i >= 0; i--) {
-        const e = embers[i]; e.life += dt;
-        if (e.life > e.max || e.y < -10) { embers.splice(i, 1); continue; }
-        const u = e.life / e.max;
-        e.x += (e.vx + Math.sin(time * .0013 * e.sw + e.ph) * .22) * dt / 16; e.y += e.vy * dt / 16 * (1 - u * .35);
-        const a = u < .12 ? u / .12 : 1 - (u - .12) / .88, sz = e.s * (1 - u * .4);
-        ex.fillStyle = `rgba(255,${Math.round(190 - u * 120)},${Math.round(70 - u * 50)},${a * .95})`;
-        ex.beginPath(); ex.arc(e.x, e.y, sz, 0, 6.2832); ex.fill();
-        if (sz > 1.5) { ex.fillStyle = `rgba(255,140,40,${a * .18})`; ex.beginPath(); ex.arc(e.x, e.y, sz * 3, 0, 6.2832); ex.fill(); }
-      }
-      requestAnimationFrame(frame);
-    }
-    function start() { if (running || reduce || document.hidden) return; running = true; last = 0; bellow = .5; requestAnimationFrame(frame); }
-    function stop() { running = false; }
+    const play = () => { if (!fv.src) fv.src = src; const p = fv.play(); if (p && p.catch) p.catch(() => {}); };
     if (hasIO && !reduce) {
-      new IntersectionObserver((en) => {
-        en.forEach((x) => {
-          if (x.isIntersecting) { size(); start(); if (!fv.src) fv.src = src; const p = fv.play(); if (p && p.catch) p.catch(() => {}); }
-          else { stop(); fv.pause(); }
-        });
-      }, { rootMargin: '80px 0px' }).observe(fire);
-      addEventListener('resize', size);
-      document.addEventListener('visibilitychange', () => { if (document.hidden) { stop(); fv.pause(); } else { start(); const p = fv.play(); if (p && p.catch) p.catch(() => {}); } });
+      let near = false;
+      new IntersectionObserver((en) => { en.forEach((x) => { near = x.isIntersecting; if (near) play(); else fv.pause(); }); }, { rootMargin: '80px 0px' }).observe(fire);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) fv.pause(); else if (near) play(); });
     }
   }
 
