@@ -1,6 +1,6 @@
 // Screenshots and checks for the quality pass: every page, phone (375) and desktop (1280), English and Arabic.
 //   NODE_PATH=$(npm root -g) node tools/shoot.cjs [outdir]
-// Serves the repo on a local port, blocks every outside request (so the store's photos fall back to coal plates),
+// Serves the repo on a local port, blocks every outside request (so dishes without a photo show the logo tile),
 // logs console errors and horizontal overflow, and writes full-page PNGs.
 const { chromium } = require('playwright');
 const { createServer } = require('http');
@@ -10,7 +10,7 @@ const { join, extname } = require('path');
 const root = join(__dirname, '..');
 const out = process.argv[2] || join(root, '..', 'shots');
 mkdirSync(out, { recursive: true });
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.mp4': 'video/mp4', '.webm': 'video/webm' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.avif': 'image/avif', '.mp4': 'video/mp4', '.webm': 'video/webm' };
 (async () => {
   const server = createServer((req, res) => {
     let file = join(root, decodeURIComponent(req.url.split('?')[0]));
@@ -24,6 +24,7 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
   const pages = ['index.html', 'menu.html', 'branches.html', 'franchise.html', '404.html'];
   const sizes = { phone: { width: 375, height: 740 }, desktop: { width: 1280, height: 800 } };
   const problems = [];
+  const innerWidthLess = (vp) => vp.width < 900;
   for (const l of ['en', 'ar']) {
     for (const [sz, vp] of Object.entries(sizes)) {
       const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: 1, locale: l === 'ar' ? 'ar-JO' : 'en-US', isMobile: sz === 'phone', hasTouch: sz === 'phone' });
@@ -45,24 +46,44 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
         if (/undefined|NaN|\[object/.test(over.text)) problems.push(`${l} ${sz} ${p}: undefined/NaN in text`);
         errors.forEach((e) => problems.push(`${l} ${sz} ${p}: ${e}`));
         if (p === 'index.html') await page.screenshot({ path: join(out, `hero-${l}-${sz}.png`) });
-        if (p === 'menu.html') {
-          // The basket: add two dishes, open the drawer, then the hand-over screen; and the branch sheet on the home page.
-          await page.evaluate(() => { document.querySelectorAll('[data-add]')[0].click(); document.querySelectorAll('[data-add]')[2].click(); document.querySelectorAll('[data-more]')[0].click(); });
-          await page.waitForTimeout(700);
-          await page.click('#basket-btn'); await page.waitForTimeout(600);
+        if (p === 'index.html') {
+          // Home: pick a category on the rail, add two dishes (one twice), open the basket and the hand-over screen, then the call sheet.
+          await page.evaluate(() => { document.querySelectorAll('.tab')[3].click(); });
+          await page.waitForTimeout(400);
+          await page.evaluate(() => { document.querySelectorAll('[data-add]')[0].click(); document.querySelectorAll('[data-add]')[1].click(); document.querySelectorAll('[data-more]')[0].click(); });
+          await page.waitForTimeout(900);
+          await page.evaluate(() => document.querySelector('#menu').scrollIntoView());
+          await page.waitForTimeout(400);
+          await page.screenshot({ path: join(out, `menu-rail-${l}-${sz}.png`) });
+          await page.evaluate(() => document.querySelector(innerWidth < 900 ? '#bar-basket' : '#basket-btn').click()); await page.waitForTimeout(600);
           await page.screenshot({ path: join(out, `basket-${l}-${sz}.png`) });
           await page.click('#bk-go'); await page.waitForTimeout(400);
           await page.screenshot({ path: join(out, `handover-${l}-${sz}.png`) });
           await page.keyboard.press('Escape'); await page.waitForTimeout(500);
           await page.evaluate(() => { try { localStorage.removeItem('mankal-basket'); } catch (e) {} });
-        }
-        if (p === 'index.html') {
+          await page.evaluate(() => scrollTo(0, 0));
+          const tabs = await page.evaluate(() => document.querySelectorAll('.tab').length);
+          if (tabs < 5) problems.push(`${l} ${sz} index.html: only ${tabs} menu tabs`);
           await page.evaluate(() => document.querySelector('[data-call]').click()); await page.waitForTimeout(600);
           await page.screenshot({ path: join(out, `sheet-${l}-${sz}.png`) });
           await page.keyboard.press('Escape'); await page.waitForTimeout(500);
         }
+        if (p === 'menu.html') {
+          // Menu page: search narrows the list, clearing it brings every section back; add a dish from a section.
+          const all = await page.evaluate(() => document.querySelectorAll('#cats .card').length);
+          await page.fill('#q', 'tikka'); await page.waitForTimeout(500);
+          const found = await page.evaluate(() => Array.from(document.querySelectorAll('#cats .card')).filter((c) => !c.hidden && c.offsetParent).length);
+          if (!(found > 0 && found < all)) problems.push(`${l} ${sz} menu.html: search for tikka shows ${found} of ${all} dishes`);
+          await page.screenshot({ path: join(out, `menu-search-${l}-${sz}.png`) });
+          await page.fill('#q', ''); await page.waitForTimeout(500);
+          await page.evaluate(() => { document.querySelectorAll('[data-add]')[0].click(); document.querySelectorAll('[data-add]')[2].click(); });
+          await page.waitForTimeout(900);
+          const count = await page.evaluate(() => (document.querySelector('#bar-total') || {}).textContent || '');
+          if (innerWidthLess(vp) && !/\d/.test(count)) problems.push(`${l} ${sz} menu.html: bar total empty after adding`);
+          await page.evaluate(() => { try { localStorage.removeItem('mankal-basket'); } catch (e) {} });
+        }
         // A full-page capture never scrolls, so the chapters would stay unrevealed: show them as a visitor would see them.
-        await page.evaluate(() => document.querySelectorAll('.ap, .skewer, .pop').forEach((el) => { el.style.transitionDelay = '0ms'; el.classList.add('in'); }));
+        await page.evaluate(() => document.querySelectorAll('.ap, .rise, .fstep').forEach((el) => { el.style.transitionDelay = '0ms'; el.classList.add('in'); }));
         // Load every image now (lazy ones too), walk down the page for the sticky frames, then back to the top.
         await page.evaluate(() => document.querySelectorAll('img[loading="lazy"]').forEach((i) => { i.loading = 'eager'; }));
         await page.waitForFunction(() => Array.from(document.images).every((i) => i.complete), null, { timeout: 8000 }).catch(() => {});
