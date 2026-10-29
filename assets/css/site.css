@@ -92,22 +92,23 @@ html[lang="ar"] .note { font-size: .92rem; }
 body.no-js .ap, body.no-io .ap { opacity: 1; transform: none; }
 
 /* ---------- the entry ---------- */
-.intro { position: fixed; inset: 0; z-index: 80; background: var(--char); display: grid; place-items: center; overflow: hidden; will-change: transform; }
+.intro { position: fixed; inset: 0; z-index: 80; background: var(--char); overflow: hidden; will-change: transform; --bedw: min(max(150vw, 100%), 1040px); --bedh: calc(var(--bedw) / 4.8); --logo: min(56vw, 300px); }
 .intro::before { content: ''; position: absolute; inset: auto 0 -30%; height: 80%; background: radial-gradient(50% 60% at 50% 100%, rgba(255, 122, 26, .4), rgba(200, 16, 46, .14) 45%, transparent 72%); opacity: 0; transition: opacity 1200ms var(--ease); }
 .intro.burn::before { opacity: 1; }
-.intro-stage { position: relative; display: grid; grid-template-rows: auto auto; row-gap: 30px; justify-items: center; align-items: center; align-content: center; text-align: center; padding: 0 var(--gutter); transition: transform 700ms var(--ease), opacity 500ms var(--ease); }
-.intro-stage > * { grid-area: 1 / 1; }
-.intro-coals { grid-area: 2 / 1; position: relative; width: min(66vw, 320px); height: 64px; }
-@media (min-width: 700px) { .intro-coals { transform: scale(1.18); transform-origin: 50% 0; margin-bottom: 14px; } }
-.intro-coals i { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); border-radius: 46% 54% 48% 52% / 55% 47% 53% 45%; background: linear-gradient(var(--ca, 118deg), transparent 46%, rgba(0, 0, 0, .5) 48%, transparent 50.5%), radial-gradient(circle at 38% 28%, #3a3029, #262019 48%, #16110e); box-shadow: inset 0 -4px 7px rgba(0, 0, 0, .6), inset 2px 2px 3px rgba(255, 255, 255, .04); transform: rotate(var(--r, 0deg)); }
-.intro-coals i:nth-child(3n) { border-radius: 58% 42% 40% 60% / 45% 60% 40% 55%; --ca: 34deg; }
-.intro-coals i:nth-child(3n+1) { border-radius: 40% 60% 55% 45% / 62% 38% 62% 38%; --ca: 156deg; }
-.intro-coals i::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(var(--ca, 118deg), transparent 46.5%, rgba(255, 238, 180, .7) 48.2%, transparent 50%), radial-gradient(circle at 50% 56%, #ffd98a 0%, #ff8a2a 30%, #d7262d 62%, rgba(90, 25, 12, .6) 100%); opacity: 0; }
-.intro.wake .intro-coals i::after { animation: coal-wake 800ms var(--d, 0ms) var(--ease) forwards, coal-flicker 1.4s calc(var(--d, 0ms) + 800ms) ease-in-out infinite alternate; }
-@keyframes coal-wake { from { opacity: 0; } to { opacity: 1; } }
-@keyframes coal-flicker { from { opacity: .7; } to { opacity: 1; } }
-.intro-coals .glow { position: absolute; inset: -70% -30%; border-radius: 50%; background: radial-gradient(50% 55% at 50% 58%, rgba(255, 138, 42, .55), rgba(200, 16, 46, .22) 48%, transparent 74%); opacity: 0; }
-.intro.wake .intro-coals .glow { animation: glow-up 1400ms 150ms var(--ease) forwards, breathe 2.4s 1600ms ease-in-out infinite alternate; }
+.intro-stage { position: absolute; inset: 0; transition: transform 700ms var(--ease), opacity 500ms var(--ease); }
+/* The bed is the restaurant's own coals, cut from its grill film (assets/video/grill-tall.mp4 at 2.4, 2.6 and 2.9 s; the rows above the watermark), shot with the lens on the chicken, so the coals sit soft behind it.
+   Cold first: the same bed in grey. The hot coals live in a round window that grows from where the ember lands while they shrink by the same amount, so they stay put and only the window moves (transform only). Three real frames cross-fade: the flicker is the film's own. */
+.intro-bed { position: absolute; left: 50%; bottom: 0; width: var(--bedw); height: var(--bedh); transform: translateX(-50%); }
+.intro-bed img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.intro-bed .hole { position: absolute; left: 50%; top: 55%; width: 140%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; transform: translate(-50%, -50%) scale(.02); will-change: transform; opacity: 0; }
+.intro.wake .intro-bed .hole { opacity: 1; }
+.intro-bed .hot { position: absolute; left: calc(var(--bedw) * .2); top: calc(var(--bedw) * .7 - var(--bedh) * .55); width: var(--bedw); height: var(--bedh); transform-origin: 50% 55%; transform: scale(50); will-change: transform; }
+.intro-bed .hot img:nth-child(n+2) { opacity: 0; }
+.intro.wake .intro-bed .hot img:nth-child(2) { animation: coal-a 1.9s ease-in-out infinite alternate; }
+.intro.wake .intro-bed .hot img:nth-child(3) { animation: coal-a 2.7s 600ms ease-in-out infinite alternate; }
+@keyframes coal-a { from { opacity: 0; } to { opacity: 1; } }
+.intro-bed .glow { position: absolute; left: -10%; right: -10%; top: -70%; bottom: -20%; background: radial-gradient(50% 55% at 50% 72%, rgba(255, 138, 42, .5), rgba(200, 16, 46, .2) 46%, transparent 72%); opacity: 0; }
+.intro.wake .intro-bed .glow { animation: glow-up 1300ms 150ms var(--ease) forwards, breathe 2.4s 1500ms ease-in-out infinite alternate; }
 @keyframes glow-up { to { opacity: 1; } }
 .intro-impact { position: fixed; left: 50%; top: var(--ty, 50%); width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: radial-gradient(circle, #fff6d0, #ff8a2a 38%, transparent 70%); opacity: 0; transform: scale(.2); }
 .intro.wake .intro-impact { animation: impact 520ms ease-out forwards; }
@@ -116,30 +117,17 @@ body.no-js .ap, body.no-io .ap { opacity: 1; transform: none; }
 .intro-drop.go { animation: drop 640ms cubic-bezier(.5, 0, .9, .6) forwards; }
 .intro.wake .intro-drop { opacity: 0; animation: none; }
 @keyframes drop { from { opacity: 1; transform: translateY(0); } to { opacity: 1; transform: translateY(var(--h, 50vh)); } }
-.intro-num { font-family: var(--display); font-weight: 800; font-size: clamp(4.6rem, 3rem + 8vw, 8.5rem); line-height: 1; color: var(--yellow); margin: 0 0 .9em; font-variant-numeric: tabular-nums; opacity: 0; transform: translateY(12px); transition: opacity 420ms var(--ease), transform 520ms var(--ease); }
-.intro.show-num .intro-num { opacity: 1; transform: none; }
-.intro-word { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.4rem, 1rem + 1.8vw, 2.2rem); color: #fff; letter-spacing: .04em; margin: 1.9em 0 0; opacity: 0; transform: translateY(10px); transition: opacity 420ms var(--ease), transform 520ms var(--ease); white-space: nowrap; }
-html[lang="ar"] .intro-word { font-weight: 400; letter-spacing: 0; text-transform: none; }
-.intro.show-word .intro-word { opacity: 1; transform: none; }
-.intro.words-out .intro-num, .intro.words-out .intro-word { opacity: 0; transform: translateY(-14px); transition: opacity 260ms var(--ease), transform 300ms var(--ease); }
-.intro-logo { position: relative; width: min(56vw, 300px); margin: 0 auto; overflow: hidden; opacity: 0; }
-.intro.show-logo .intro-logo { opacity: 1; }
-.intro-logo img { width: 100%; height: auto; }
+/* The logo rises out of the flame (the fire canvas sits behind it): it comes up from the bed with a little overshoot while the soot cover slides off it from the bottom. */
+.intro-logo { position: absolute; left: 50%; bottom: calc(var(--bedh) * .62 + 28px); width: var(--logo); margin-left: calc(var(--logo) / -2); overflow: hidden; opacity: 0; transform: translateY(72px) scale(.8); transition: opacity 300ms var(--ease), transform 1000ms cubic-bezier(.2, 1.25, .3, 1); }
+.intro.show-logo .intro-logo { opacity: 1; transform: none; }
+.intro-logo img { width: 100%; height: auto; display: block; }
 .intro-logo .cover { position: absolute; left: -2%; right: -2%; top: -20%; bottom: -16%; background: linear-gradient(to bottom, var(--char) 0%, var(--char) 89%, transparent 100%); transform: translateY(0); will-change: transform; }
-.intro-logo .heat { position: absolute; left: -10%; right: -10%; bottom: -4%; height: 20%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 190, 80, .9), rgba(255, 122, 26, .55) 38%, rgba(200, 16, 46, .18) 62%, transparent 75%); opacity: 0; }
-.intro.show-logo .intro-logo .cover { animation: burn-in 1150ms cubic-bezier(.4, 0, .2, 1) forwards; }
-.intro.show-logo .intro-logo .heat { animation: heat-fade 1150ms linear forwards; }
+.intro.show-logo .intro-logo .cover { animation: burn-in 800ms cubic-bezier(.4, 0, .2, 1) forwards; }
 @keyframes burn-in { from { transform: translateY(0); } to { transform: translateY(-140%); } }
-@keyframes heat-fade { 0% { opacity: 0; } 10% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
+.intro-fire { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 66%; pointer-events: none; }
 .intro-skip { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); inset-inline-end: 18px; background: transparent; border: 1px solid rgba(255, 255, 255, .35); color: rgba(255, 255, 255, .85); border-radius: 999px; padding: 8px 14px; font: 600 .82rem var(--text); cursor: pointer; opacity: 0; transition: opacity 400ms var(--ease) 500ms; }
 .intro.burn .intro-skip { opacity: 1; }
 .intro-skip:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
-.intro .spark { position: absolute; bottom: -10px; left: var(--x, 50%); width: 4px; height: 4px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 10px 2px rgba(255, 140, 40, .6); opacity: 0; }
-.intro.wake .spark { animation: spark 2200ms var(--d, 0ms) ease-out infinite; }
-.intro.wake .spark:nth-child(even) { animation-name: spark-l; }
-.intro .spark:nth-child(3) { --x: 18%; --d: 120ms; } .intro .spark:nth-child(4) { --x: 31%; --d: 640ms; } .intro .spark:nth-child(5) { --x: 44%; --d: 260ms; } .intro .spark:nth-child(6) { --x: 55%; --d: 900ms; } .intro .spark:nth-child(7) { --x: 63%; --d: 40ms; } .intro .spark:nth-child(8) { --x: 74%; --d: 520ms; } .intro .spark:nth-child(9) { --x: 86%; --d: 760ms; }
-@keyframes spark { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(22px, -72vh) scale(.3); opacity: 0; } }
-@keyframes spark-l { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 100% { transform: translate(-22px, -72vh) scale(.3); opacity: 0; } }
 .intro.lift { transform: translateY(-102%); transition: transform 760ms cubic-bezier(.76, 0, .24, 1); pointer-events: none; }
 .intro.lift .intro-stage { transform: translateY(-40px) scale(1.04); opacity: 0; }
 .intro.gone { display: none; }
@@ -545,11 +533,12 @@ html[dir="rtl"] .drawer-panel { transform: translateX(-100%); }
 .sheet-br a { margin-inline-start: auto; font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
-  .intro .spark, .sparks i { animation: none !important; }
+  .sparks i { animation: none !important; }
   .tiles .food img, .fire .glow { animation: none !important; }
-  .intro.show-logo .intro-logo .cover, .intro.show-logo .intro-logo .heat { animation-duration: 500ms; }
-  .intro-num, .intro-word, .intro-skip { transition-duration: 1ms; transition-delay: 0ms; }
-  .intro-coals i::after, .intro-coals .glow { animation: none !important; opacity: 1; } .intro-impact { animation: none !important; }
+  .intro.show-logo .intro-logo .cover { animation-duration: 500ms; }
+  .intro-logo, .intro-skip { transition-duration: 1ms; transition-delay: 0ms; }
+  .intro-bed .hole { transform: translate(-50%, -50%) scale(1) !important; } .intro-bed .hot { transform: none !important; }
+  .intro-bed .hot img, .intro-bed .glow { animation: none !important; opacity: 1; } .intro-impact { animation: none !important; }
   .hero h1 .lit i::before, .hero h1 .lit .sp, .fireline .bed i, .fireline .tip, .order-go [data-call].ring svg { animation: none !important; }
   .hero h1 .lit i::before { opacity: .7; } .fireline .bed { transform: none; animation: none; } .fireline .tip { opacity: 1; transform: translateX(var(--w, 0px)); } .fireline b { opacity: 1; animation: none; }
   .hours.open i::after { animation: none; }

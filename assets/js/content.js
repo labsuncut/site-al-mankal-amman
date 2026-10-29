@@ -72,7 +72,7 @@ const TEXT = {
     skip: 'Skip to the menu', skip_main: 'Skip to content',
     brand: 'Al Mankal', brand_sub: 'Chicken tikka · Amman',
     nav_menu: 'Menu', nav_branches: 'Branches', nav_franchise: 'Franchising', nav_story: 'Story', nav_basket: 'Basket',
-    intro_still: 'Still on the coals', skip_intro: 'Skip', still_on: 'still on',
+    skip_intro: 'Skip', still_on: 'still on',
 
     hero_eyebrow: 'Gardens · Sweifieh · Amman',
     hero_title: 'On the coals since 1985',
@@ -164,7 +164,7 @@ const TEXT = {
     skip: 'روح للقائمة', skip_main: 'روح للمحتوى',
     brand: 'المنقل', brand_sub: 'تشكن تكا · عمّان',
     nav_menu: 'القائمة', nav_branches: 'الفروع', nav_franchise: 'الامتياز', nav_story: 'القصة', nav_basket: 'السلة',
-    intro_still: 'لسا على الفحم', skip_intro: 'تخطّي', still_on: 'لليوم',
+    skip_intro: 'تخطّي', still_on: 'لليوم',
 
     hero_eyebrow: 'الجاردنز · الصويفية · عمّان',
     hero_title: 'على الفحم من سنة ١٩٨٥',

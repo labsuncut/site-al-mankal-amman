@@ -530,40 +530,75 @@
     }
   }
 
-  // ---------- the entry, once per tab: an ember falls, 1985 runs forward to today, "Still on the coals", the logo burns in, the curtain lifts. Skip in the corner. ----------
+  // ---------- the entry, once per tab: an ember falls onto the cold bed, the coals catch where it lands, a flame climbs and the logo rises out of it, the curtain lifts. Skip in the corner. ----------
+  // The flame is particles on one canvas with additive light: soft discs born on a short line across the bed where the ember landed, white-yellow at birth, orange then red as they climb, shrinking and fading;
+  // grey ones behind them are the smoke, tiny long-lived ones the sparks. They climb just fast enough to reach the top of the logo, so the logo comes up through the fire on every screen size.
+  function flame(canvas, ox, oy, topY) {
+    const cx = canvas.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 1.5), cb = canvas.getBoundingClientRect(), W = Math.round(cb.width), H = Math.round(cb.height);
+    canvas.width = W * dpr; canvas.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); oy -= cb.top; topY -= cb.top; // the canvas covers only the lower part of the screen, so less to clear each frame
+    const sprite = (inner, mid) => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, inner); r.addColorStop(.42, mid); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c; };
+    const S = [sprite('rgba(255,250,225,1)', 'rgba(255,205,90,.55)'), sprite('rgba(255,175,60,1)', 'rgba(255,110,30,.45)'), sprite('rgba(255,90,30,.95)', 'rgba(190,30,20,.35)'), sprite('rgba(130,120,115,.5)', 'rgba(80,75,72,.12)'), sprite('rgba(255,235,190,1)', 'rgba(255,150,50,.6)')];
+    const reach = Math.max(150, oy - topY + 36), spread = Math.min(W * .27, 190), base = Math.max(8, reach * .055), phone = W < 700;
+    const fire = [], smoke = [], sparks = [];
+    let power = 0, target = 1, raf = 0, last = 0, on = false, carry = [0, 0, 0];
+    const born = (kind) => {
+      const t = (Math.random() - .5) * 2, edge = 1 - Math.abs(t) * .5;
+      if (kind === 2) return { x: ox + t * spread, y: oy, vx: (Math.random() - .5) * 60, vy: -reach * (1.1 + Math.random() * .8), s: 1.2 + Math.random() * 1.4, life: 0, max: 900 + Math.random() * 900, sway: Math.random() * 6.3 };
+      if (kind === 1) return { x: ox + t * spread * .9, y: oy - base, vx: (Math.random() - .5) * 24, vy: -reach * (.45 + Math.random() * .3) * edge, s: base * (1.4 + Math.random() * .8), life: 0, max: 1500 + Math.random() * 900, sway: Math.random() * 6.3 };
+      return { x: ox + t * spread, y: oy + (Math.random() - .5) * base * .6, vx: (Math.random() - .5) * 40, vy: -(reach / .66) * (.85 + Math.random() * .4) * edge, s: base * (phone ? .9 : .7) * (1 + Math.random() * 1.1), life: 0, max: 620 + Math.random() * 420, sway: Math.random() * 6.3 };
+    };
+    const spawn = (list, kind, rate, dt, cap) => { carry[kind] += rate * power * dt / 1000; while (carry[kind] >= 1 && list.length < cap) { list.push(born(kind)); carry[kind] -= 1; } };
+    const move = (list, dt, slow, pull) => { for (let i = list.length - 1; i >= 0; i--) { const p = list[i]; p.life += dt; const u = p.life / p.max; if (u >= 1) { list.splice(i, 1); continue; } p.x += (p.vx + Math.sin(p.sway + p.life / 150) * 18 + (ox - p.x) * pull) * dt / 1000; p.y += p.vy * (1 - u * slow) * dt / 1000; p.u = u; } };
+    const frame = (now) => {
+      if (!on) return;
+      const dt = Math.min(48, now - last || 16); last = now;
+      power += (target - power) * Math.min(1, dt / 420);
+      spawn(fire, 0, phone ? 230 : 400, dt, 520); spawn(smoke, 1, phone ? 6 : 9, dt, 40); spawn(sparks, 2, 7, dt, 30);
+      move(fire, dt, .5, 1.6); move(smoke, dt, .3, .4); move(sparks, dt, .2, 0);
+      cx.clearRect(0, 0, W, H);
+      cx.globalCompositeOperation = 'source-over';
+      for (const p of smoke) { const a = .13 * (1 - p.u) * Math.min(1, p.u * 4) * power, r = p.s * (.6 + p.u * 1.8); cx.globalAlpha = a; cx.drawImage(S[3], p.x - r, p.y - r, r * 2, r * 2); }
+      cx.globalCompositeOperation = 'lighter';
+      for (const p of fire) { const a = (p.u < .1 ? p.u / .1 : Math.pow(1 - p.u, .9)) * .55, r = p.s * (1.25 - p.u * .6); cx.globalAlpha = a; cx.drawImage(S[p.u < .2 ? 0 : p.u < .62 ? 1 : 2], p.x - r, p.y - r, r * 2, r * 2); }
+      for (const p of sparks) { const a = 1 - p.u, r = p.s * 2.2; cx.globalAlpha = a; cx.drawImage(S[4], p.x - r, p.y - r, r * 2, r * 2); }
+      cx.globalAlpha = 1;
+      raf = requestAnimationFrame(frame);
+    };
+    return {
+      start() { on = true; last = performance.now(); raf = requestAnimationFrame(frame); },
+      settle(v) { target = v; },
+      stop() { on = false; cancelAnimationFrame(raf); cx.clearRect(0, 0, W, H); }
+    };
+  }
+
   const intro = $('#intro');
   const light = () => { body.classList.add('lit'); if (page === 'home') setTimeout(emberToCall, 3450); };
   if (intro && !session.get('mankal-intro')) {
     body.classList.add('intro-wait');
-    const numEl = $('#intro-num'), drop = $('.intro-drop', intro), thisYear = new Date().getFullYear();
-    const digits = (s) => (lang === 'ar' ? s.replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[d]) : s);
-    numEl.textContent = digits('1985');
-    const timers = []; let done = false;
+    const drop = $('.intro-drop', intro), impact = $('.intro-impact', intro), bed = $('#intro-bed', intro), hole = $('.hole', bed), hot = $('.hot', bed), logo = $('.intro-logo', intro);
+    const timers = []; let done = false, fire = null;
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
     const finish = () => {
-      if (done) return; done = true; timers.forEach(clearTimeout);
+      if (done) return; done = true; timers.forEach(clearTimeout); if (fire) fire.stop();
       intro.classList.add('lift'); body.classList.remove('intro-wait'); light(); session.set('mankal-intro', '1');
       setTimeout(() => intro.classList.add('gone'), reduce ? 400 : 800);
     };
     $('[data-skip-intro]', intro).addEventListener('click', finish);
-    const coals = $('#intro-coals'), impact = $('.intro-impact', intro);
-    // The ember lands in the middle of the coal bed; each coal wakes after a delay that grows with its distance from the impact.
-    const aim = () => {
-      const b = coals.getBoundingClientRect(), cx = b.left + b.width / 2, cy = b.top + b.height * .5;
-      drop.style.setProperty('--h', (cy + 14) + 'px'); impact.style.setProperty('--ty', cy + 'px');
-      $$('i', coals).forEach((c) => { const r = c.getBoundingClientRect(); const d = Math.hypot(r.left + r.width / 2 - cx, r.top + r.height / 2 - cy); c.style.setProperty('--d', Math.round(40 + d * 2.4) + 'ms'); });
+    // The ember lands in the middle of the bed. The hot coals show through a round window that grows from that point while they shrink by the same amount, so they stay still and only the window moves.
+    const reveal = (ms) => {
+      const t0 = performance.now();
+      const run = (now) => { const u = Math.min(1, (now - t0) / ms), s = .02 + .98 * (1 - Math.pow(1 - u, 3)); hole.style.transform = `translate(-50%, -50%) scale(${s})`; hot.style.transform = `scale(${1 / s})`; if (u < 1 && !done) requestAnimationFrame(run); };
+      requestAnimationFrame(run);
     };
     const go = () => {
-      aim();
-      if (reduce) { numEl.textContent = digits(String(thisYear)); intro.classList.add('wake', 'burn', 'show-num', 'show-word', 'show-logo'); at(900, finish); return; }
+      const b = bed.getBoundingClientRect(), px = b.left + b.width / 2, py = b.top + b.height * .55;
+      drop.style.setProperty('--h', (py + 12) + 'px'); impact.style.setProperty('--ty', py + 'px');
+      if (reduce) { hole.style.transform = 'translate(-50%, -50%) scale(1)'; hot.style.transform = 'none'; intro.classList.add('wake', 'burn', 'show-logo'); at(900, finish); return; }
       drop.classList.add('go');
-      at(640, () => intro.classList.add('wake', 'burn'));
-      at(1050, () => intro.classList.add('show-num'));
-      at(1450, () => { const t0 = performance.now(); const run = (now) => { const u = Math.min(1, (now - t0) / 850), e = 1 - Math.pow(1 - u, 3); numEl.textContent = digits(String(Math.round(1985 + (thisYear - 1985) * e))); if (u < 1 && !done) requestAnimationFrame(run); }; requestAnimationFrame(run); });
-      at(2350, () => intro.classList.add('show-word'));
-      at(3100, () => intro.classList.add('words-out'));
-      at(3350, () => intro.classList.add('show-logo'));
-      at(4450, finish);
+      at(640, () => { intro.classList.add('wake', 'burn'); reveal(1300); fire = flame($('#intro-fire', intro), px, py, logo.getBoundingClientRect().top); fire.start(); });
+      at(1000, () => intro.classList.add('show-logo'));
+      at(2500, () => { if (fire) fire.settle(.38); });
+      at(3400, finish);
     };
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));
   } else {
