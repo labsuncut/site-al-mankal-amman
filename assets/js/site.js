@@ -42,6 +42,11 @@
 
   // ---------- menu data and photos ----------
   const byId = {}; MENU.forEach((c) => c.items.forEach((i) => { byId[i.id] = i; }));
+  const catById = {}; MENU.forEach((c) => c.items.forEach((i) => { catById[i.id] = catById[i.id] || c.key; })); const catOf = (id) => catById[id];
+  // Ids on the restaurant's store used by the basket's 'goes well with it' row (menu-data.js).
+  // Upsell lists (ids on the restaurant's store). meal: sandwich → the store's own 2-sandwich meal with fries, pickles and a cola.
+  const UP = { meal: { 34818926: 34818931, 34818927: 34818930, 34818928: 34818929, 34815875: 34815879, 23508397: 34818932, 31892686: 34818932 }, dips: [23359396, 23359397, 23359398, 34802919, 27243904], sandwiches: [34818926, 34818928, 34818927, 23508397], mains: [23359335, 23359348, 23359350], fattoush: 23359384 };
+  const PAIR = { dip: '23359396', bread: '23359364', drink: '32509051', shan: '23359402', salad: '23359392', fries: '23359377', main: '23359335' };
   const SIG = SIGNATURE.map((id) => byId[id]).filter(Boolean);
   const TABS = [{ key: 'sig', items: SIG }].concat(MENU.map((c) => ({ key: c.key, cat: c, items: c.items })));
   function photoOf(item) {
@@ -58,7 +63,7 @@
   function media(item, eager) {
     const p = photoOf(item);
     if (!p) return noPhoto();
-    const chip = item.spicy ? `<span class="chip">${t('mn_spicy')}</span>` : '';
+    const chip = item.spicy ? `<span class="chip chip-hot" role="img" aria-label="${t('mn_spicy')}" title="${t('mn_spicy')}"><svg viewBox="0 0 24 24" ><path d="M12.2 5.9c.2-1.9 1.4-3.3 3.3-3.9.6-.2 1.1.5.7 1-1 1.1-1.5 2-1.7 3.1" fill="none" stroke="#3b8f3b" stroke-width="1.9" stroke-linecap="round"/><path d="M14.3 5.6c-2.5 3.6-3.4 8.5-7.4 11.2-1.8 1.2-3.9 1.6-5.7 1.3-.6-.1-.9.6-.4 1 2.6 2.1 6.4 2.6 9.8 1.2 4.3-1.8 7.3-6 7.6-10.7.1-1.8-.4-3.3-1.4-4.3-.8-.8-2-.6-2.5.3Z" fill="#d7262d"/><path d="M15.8 7.3c-.5 3.4-2.6 6.9-6 9.1" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.2" stroke-linecap="round"/></svg></span>` : '';
     if (p.own) return `<div class="card-ph">${picture(p.own, '(min-width: 1100px) 280px, (min-width: 700px) 31vw, 46vw', eager)}${chip}</div>`;
     return `<div class="card-ph"><img class="store" src="${esc(p.store)}" alt="" width="640" height="640" loading="lazy" decoding="async">${chip}</div>`;
   }
@@ -305,6 +310,28 @@
         <div class="thumb">${p && p.own ? `<img src="assets/img/s/${p.own}-480.webp" alt="" loading="lazy">` : p && p.store ? `<img src="${esc(p.store)}" alt="" loading="lazy">` : ''}</div>
         <div><p class="name">${esc(it[lang])}</p><span class="each">${num(it.price)} ${t('jd')}</span></div>
         <span data-ctl="${id}">${controlHtml(id)}</span></div>`; }).join('');
+    // Complete your sufra: what a good waiter would ask, in the order that works. Everything is the restaurant's own menu at its own prices; nothing is invented.
+    // 1. "Make it a meal": the store's own 2-sandwich meals, shown as the price difference (anchoring: +2.70 reads small next to 5.00).
+    // 2. Sauces and dips at 0.50: tiny, many people take two. 3. Another sandwich, or a sandwich for someone else, or the chicken when only sides are in. 4. Cold and fresh: drink, salad, bread, fries the order lacks.
+    const have = (test) => ids.some((id) => test(byId[id], catOf(id)));
+    const said = (word) => have((it) => new RegExp(word, 'i').test(it.den || ''));
+    const inCat = (k) => have((it, c) => c === k);
+    const hasMain = inCat('collection-1460895') || inCat('collection-9877883') || inCat('chicken-meals') || inCat('sandwiches') || inCat('main-dishes');
+    const groups = [], used = new Set();
+    const group = (title, list, delta) => { const items = list.filter((id) => id && byId[id] && !basket[id] && !used.has(String(id))).slice(0, 4); if (!items.length) return; items.forEach((id) => used.add(String(id))); groups.push({ title, items, delta }); };
+    if (inCat('sandwiches')) group('up_meal', ids.map((id) => UP.meal[id]).filter((m) => m && !ids.includes(String(m))), (m) => { const from = ids.find((id) => UP.meal[id] === m); return from ? byId[m].price - byId[from].price : 0; });
+    if (hasMain) group('up_dips', UP.dips);
+    if (inCat('sandwiches')) group('up_sand', UP.sandwiches);
+    else if (hasMain) group('up_sand2', UP.sandwiches.slice(0, 2));
+    else group('pair_main', UP.mains);
+    if (hasMain) group('up_cold', [].concat(!inCat('beverages') && !said('cola|كولا') ? [PAIR.drink, PAIR.shan] : [], !inCat('cold-appetizers') && !said('hummus|salad|حمص|سلطة') ? [PAIR.salad, UP.fattoush] : [], !said('bread|puri|pouri|bouri|بوري|خبز') && !inCat('sandwiches') ? [PAIR.bread] : [], !said('fries|بطاطا') ? [PAIR.fries] : []));
+    const card = (id, delta) => { const it = byId[id], p = photoOf(it), price = delta ? `+${num(delta)}` : num(it.price); return `<div class="up-card">
+        <div class="thumb">${p && p.own ? `<img src="assets/img/s/${p.own}-480.webp" alt="" loading="lazy">` : p && p.store ? `<img src="${esc(p.store)}" alt="" loading="lazy">` : ''}</div>
+        <p class="name">${esc(it[lang])}</p><span class="each">${price} ${t('jd')}</span>
+        <button class="add-s" type="button" data-pair="${id}" aria-label="${esc(t('add_short'))} ${esc(it[lang])}">${plus}</button></div>`; };
+    const upHtml = groups.length ? `<section class="up" aria-labelledby="up-t"><h3 id="up-t">${t('up_title')}</h3>${groups.map((g) => `<div class="up-group"><p class="up-h">${t(g.title)}</p><div class="up-row">${g.items.map((id) => card(id, g.delta ? g.delta(id) : 0)).join('')}</div></div>`).join('')}</section>` : '';
+    bodyEl.insertAdjacentHTML('beforeend', upHtml);
+    $$('[data-pair]', bodyEl).forEach((b) => b.addEventListener('click', () => { const id = b.dataset.pair; setQty(id, (basket[id] || 0) + 1); bump(); renderBasket(); const n = $('[data-pair]', bodyEl) || $('#bk-go'); if (n) n.focus(); }));
     foot.innerHTML = `<div class="bk-total"><span>${t('bk_total')}</span><span class="price">${num(total())}<small>${t('jd')}</small></span></div><button class="btn btn-red" type="button" id="bk-go">${t('bk_checkout')}</button><button class="bk-clear" type="button" id="bk-clear">${t('bk_clear')}</button><p class="note">${t('bk_note')}</p>`;
     $('#bk-go').addEventListener('click', () => { handover = true; renderBasket(); $('#ho-go').focus(); });
     $('#bk-clear').addEventListener('click', () => { Object.keys(basket).forEach((id) => { delete basket[id]; syncControls(id); }); saveBasket(); renderBasket(); });
@@ -324,7 +351,7 @@
 
   // ---------- which branch? ----------
   const sheet = $('#sheet'); let sheetFocus = null;
-  function openSheet() { sheetFocus = document.activeElement; sheet.hidden = false; body.classList.add('modal-open'); requestAnimationFrame(() => { sheet.classList.add('open'); $('.sb .btn', sheet).focus(); }); }
+  function openSheet() { sheetFocus = document.activeElement; sheet.hidden = false; body.classList.add('modal-open'); requestAnimationFrame(() => { sheet.classList.add('open'); $('.sheet-call', sheet).focus(); }); }
   function closeSheet() { if (sheet.hidden) return; sheet.classList.remove('open'); body.classList.remove('modal-open'); setTimeout(() => { sheet.hidden = true; }, reduce ? 0 : 300); if (sheetFocus && sheetFocus.focus) sheetFocus.focus(); }
   document.addEventListener('click', (e) => { if (e.target.closest('[data-call]')) openSheet(); else if (e.target.closest('[data-close-sheet]')) closeSheet(); });
   sheet.addEventListener('keydown', (e) => trap(e, sheet));
@@ -405,6 +432,40 @@
   // A heading marked data-split gets each word in its own span, so they can rise one after another.
   function split(el) { el.innerHTML = el.textContent.split(' ').map((w, i) => `<span class="w ap" style="transition-delay:${i * 90}ms">${esc(w)}</span>`).join(' '); }
 
+  // ---------- the hero's fire: the word COALS lit from below, the fire line, the ember that lands on Call ----------
+  function litHero() {
+    const h = $('#hero-title'); if (!h) return;
+    const txt = t('hero_title'), word = lang === 'ar' ? 'الفحم' : 'coals';
+    const i = txt.toLowerCase().indexOf(word);
+    if (i < 0) { h.textContent = txt; h.removeAttribute('aria-label'); return; }
+    const w = txt.slice(i, i + word.length);
+    const letters = lang === 'ar' ? `<i data-ch="${esc(w)}" style="--i:0">${esc(w)}</i>` : [...w].map((ch, k) => `<i data-ch="${esc(ch)}" style="--i:${k}">${esc(ch)}</i>`).join('');
+    const sparks = ['14%|0s', '40%|.8s', '63%|1.4s', '86%|.4s'].map((s) => { const [x, d] = s.split('|'); return `<b class="sp" style="--x:${x};--d:${d}"></b>`; }).join('');
+    h.innerHTML = `${esc(txt.slice(0, i))}<span class="lit">${letters}${sparks}</span>${esc(txt.slice(i + word.length))}`;
+    h.setAttribute('aria-label', txt);
+  }
+  function sizeLine() {
+    const line = $('.fireline'); if (!line) return;
+    const w = Math.max(0, line.querySelector('.bed').offsetWidth - 14);
+    line.style.setProperty('--w', (lang === 'ar' ? -w : w) + 'px');
+  }
+  addEventListener('resize', sizeLine);
+  function emberToCall() {
+    const line = $('.fireline'), fly = $('#ember-fly'), call = $('.order-go [data-call]'), host = $('.hero-text');
+    if (!line || !fly || !call || !host || reduce || !fly.animate) return;
+    const hr = host.getBoundingClientRect(), tr = line.querySelector('.tip').getBoundingClientRect(), cr = call.getBoundingClientRect();
+    if (cr.bottom < 0 || tr.top > innerHeight) return;
+    const x0 = tr.left - hr.left + tr.width / 2 - 5, y0 = tr.top - hr.top + tr.height / 2 - 5;
+    const x1 = cr.left - hr.left + cr.width / 2 - 5, y1 = cr.top - hr.top + cr.height / 2 - 5;
+    const bend = lang === 'ar' ? -36 : 36;
+    const a = fly.animate([
+      { transform: `translate(${x0}px, ${y0}px) scale(1)`, opacity: 1 },
+      { transform: `translate(${(x0 + x1) / 2 + bend}px, ${(y0 + y1) / 2 - 10}px) scale(1.4)`, opacity: 1, offset: .55 },
+      { transform: `translate(${x1}px, ${y1}px) scale(.3)`, opacity: 0 },
+    ], { duration: 950, easing: 'cubic-bezier(.45, 0, .55, 1)' });
+    a.onfinish = () => { call.classList.add('ring'); setTimeout(() => call.classList.remove('ring'), 1400); };
+  }
+
   // ---------- language ----------
   function applyLang() {
     T = TEXT[lang];
@@ -418,6 +479,7 @@
     $$('[data-split]').forEach((el) => { split(el); watch(el); });
     const titles = { home: 'title_home', menu: 'title_menu', branches: 'title_branches', franchise: 'title_franchise' };
     if (titles[page]) document.title = t(titles[page]);
+    litHero(); sizeLine();
     renderRail(); renderGrid(false); renderMenuPage(false); renderAgain(); renderBasket(); renderHours(); renderReels(); syncChoices();
   }
   $('#lang').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); });
@@ -426,15 +488,30 @@
   const onScroll = () => body.classList.toggle('scrolled', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  // ---------- the hero photo answers the pointer with a slow tilt (a lerp, never 1:1); on phones it drifts with the scroll ----------
-  const heroImg = $('.hero .ph img'), heroPh = $('.hero-photo');
-  if (heroImg && fine && !reduce) {
-    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
-    const ease = () => { cx += (tx - cx) * .08; cy += (ty - cy) * .08; heroImg.style.transform = `scale(1.06) translate(${cx}px, ${cy}px)`; if (Math.abs(tx - cx) > .05 || Math.abs(ty - cy) > .05) raf = requestAnimationFrame(ease); else raf = 0; };
-    heroImg.addEventListener('animationend', () => {
-      heroPh.addEventListener('pointermove', (e) => { const r = heroPh.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5) * -18; ty = ((e.clientY - r.top) / r.height - .5) * -18; if (!raf) raf = requestAnimationFrame(ease); });
-      heroPh.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(ease); });
-    }, { once: true });
+  // ---------- the hero film: the skewer loop and the small fire run only while the panel is on screen and after the curtain; a hand or a finger on it fans the coals ----------
+  const mk = $('#hero-mankal');
+  let wakeMankal = () => {};
+  if (mk) {
+    const film = $('#mankal-film', mk), vid = $('#mankal-flame', mk), sp = $('#mankal-sparks', mk);
+    const h264 = vid.canPlayType('video/mp4; codecs="avc1.4d401e"');
+    const filmSrc = h264 ? 'assets/video/skewer.mp4' : 'assets/video/skewer.webm';
+    const src = h264 ? (innerWidth < 700 ? 'assets/video/flame-sm.mp4' : 'assets/video/flame.mp4') : 'assets/video/flame.webm';
+    let sparks = null, on = false, seen = false, lit = false, fanT = 0;
+    const play = (v) => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+    const start = () => {
+      if (on || !seen || !lit || reduce) return; on = true;
+      if (!film.src) film.src = filmSrc;
+      if (!vid.src) vid.src = src;
+      play(film); play(vid);
+      if (!sparks) { const r = mk.getBoundingClientRect(); sparks = flame(sp, r.width / 2, r.top + r.height * .9, r.top + r.height * .45, true); }
+      sparks.start();
+    };
+    const stop = () => { if (!on) return; on = false; film.pause(); vid.pause(); if (sparks) sparks.stop(); };
+    const fan = () => { if (!on) return; mk.classList.add('fan'); vid.playbackRate = 1.6; if (sparks && sparks.burst) sparks.burst(12); clearTimeout(fanT); fanT = setTimeout(() => { mk.classList.remove('fan'); vid.playbackRate = 1; }, 900); };
+    new IntersectionObserver((es) => es.forEach((e) => { seen = e.isIntersecting; seen ? start() : stop(); }), { threshold: .15 }).observe(mk);
+    wakeMankal = () => { lit = true; start(); setTimeout(fan, 1150); };
+    mk.addEventListener('pointerenter', fan); mk.addEventListener('pointerdown', fan);
+    let rT = 0; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (sparks) { sparks.stop(); sparks = null; } if (on) { on = false; start(); } }, 200); });
   }
 
   // ---------- the fire band: the grill loop and the embers, only while on screen ----------
@@ -495,16 +572,149 @@
     }
   }
 
-  // ---------- the entry: the logo burns in once per tab, then the curtain lifts and the page assembles (body.lit) ----------
+  // ---------- the flame as light, not particles: a WebGL shader draws layered, upward-scrolling noise (fractal, domain-warped) through a flame-shaped mask and a colour ramp from deep red to white. ----------
+  // It reads like filmed fire because every pixel is continuous, the tongues tear and rejoin, and the brightness ramps like a real flame. Height and width come in from the page, so it reaches past the logo on any screen.
+  function fireGL(canvas, ox, oy, topY, logoH) {
+    const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false });
+    if (!gl) return null;
+    const dpr = 1, cb = canvas.getBoundingClientRect(), W = Math.round(cb.width), H = Math.round(cb.height); // soft by nature, so one device pixel per CSS pixel is plenty
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    const vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }';
+    const fs = `precision mediump float;
+      uniform float u_t, u_pow, u_ox, u_oy, u_h, u_w, u_gust;
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(hash(i), hash(i + vec2(1., 0.)), f.x), mix(hash(i + vec2(0., 1.)), hash(i + vec2(1., 1.)), f.x), f.y); }
+      float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= .5; } return v; }
+      void main(){
+        float y = (gl_FragCoord.y - u_oy) / u_h;
+        float x = (gl_FragCoord.x - u_ox) / u_w;
+        if (y < -.12 || y > 1.45 || abs(x) > 1.6) discard;
+        // Three noises: a slow wide one bends the whole column, two faster ones tear the tongues. Everything scrolls up.
+        float lean = fbm(vec2(y * 1.2, u_t * .9)) - .5;
+        float xc = x + lean * .9 * clamp(y, 0., 1.);
+        vec2 q = vec2(xc * 1.3, y * 2.0);
+        float n1 = fbm(q * 1.8 + vec2(0., -u_t * 2.2));
+        float n2 = fbm(q * 3.4 + vec2(u_t * .2, -u_t * 3.6) + n1 * 1.8);
+        float n = mix(n1, n2, .6);
+        float width = mix(1.0, .22, clamp(y, 0., 1.)) * u_gust;
+        float shape = 1.0 - smoothstep(0.0, 1.0, abs(xc) / width + (n - .5) * 1.3);
+        float vert = 1.0 - smoothstep(.4, 1.35, y + (n - .5) * 1.7);
+        float base = smoothstep(-.1, .14, y);
+        float i = shape * vert * base * (.3 + n * 1.5) * u_pow;
+        i = pow(clamp(i, 0., 1.), 1.5);
+        vec3 c = mix(vec3(.45, .03, .0), vec3(1., .3, .03), smoothstep(.06, .4, i));
+        c = mix(c, vec3(1., .7, .15), smoothstep(.4, .74, i));
+        c = mix(c, vec3(1., .95, .75), smoothstep(.74, 1., i) * (1. - smoothstep(.2, .7, y)));
+        float a = smoothstep(.06, .5, i);
+        gl_FragColor = vec4(c * a, a);
+      }`;
+    const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+    let prog;
+    try { prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog); if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null; } catch (e) { return null; }
+    gl.useProgram(prog);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = {}; ['u_t', 'u_pow', 'u_ox', 'u_oy', 'u_h', 'u_w', 'u_gust'].forEach((k) => { U[k] = gl.getUniformLocation(prog, k); });
+    gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0);
+    // Geometry in device pixels, y up from the canvas bottom. The flame stands on the bed and is tall enough to pass the logo.
+    const oxp = (ox - cb.left) * dpr, oyp = (H - (oy - cb.top)) * dpr, hp = ((oy - topY) + logoH * .9) * dpr, wp = Math.min(W * .42, 330) * dpr;
+    gl.uniform1f(U.u_ox, oxp); gl.uniform1f(U.u_oy, oyp); gl.uniform1f(U.u_h, hp); gl.uniform1f(U.u_w, wp);
+    let power = 0, target = 1, burstAt = -1, raf = 0, on = false, t0 = 0, last = 0;
+    const frame = (now) => {
+      if (!on) return;
+      const dt = Math.min(48, now - last || 16); last = now; const t = (now - t0) / 1000;
+      power += (target - power) * Math.min(1, dt / 420);
+      const boom = burstAt < 0 ? 0 : Math.max(0, 1 - (now - burstAt) / 600) * .7;
+      const gust = .86 + .14 * Math.sin(t * 1.9) * Math.sin(t * 4.7) + .06 * Math.sin(t * 11.3);
+      gl.uniform1f(U.u_t, t); gl.uniform1f(U.u_pow, power * (.86 + .14 * Math.abs(Math.sin(t * 2.3) * Math.sin(t * 5.1))) + boom); gl.uniform1f(U.u_gust, gust + boom * .4);
+      gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLES, 0, 3);
+      raf = requestAnimationFrame(frame);
+    };
+    return {
+      start() { on = true; t0 = last = performance.now(); raf = requestAnimationFrame(frame); },
+      settle(v) { target = v; },
+      burst() { burstAt = performance.now(); },
+      stop() { on = false; cancelAnimationFrame(raf); gl.clear(gl.COLOR_BUFFER_BIT); }
+    };
+  }
+
+  // ---------- the entry, once per tab: an ember falls onto the cold bed, the coals catch where it lands, a flame climbs and the logo rises out of it, the curtain lifts. Skip in the corner. ----------
+  // The flame is particles on one canvas with additive light: soft discs born on a short line across the bed where the ember landed, white-yellow at birth, orange then red as they climb, shrinking and fading;
+  // grey ones behind them are the smoke, tiny long-lived ones the sparks. They climb just fast enough to reach the top of the logo, so the logo comes up through the fire on every screen size.
+  function flame(canvas, ox, oy, topY, sparksOnly) {
+    const cx = canvas.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 1.5), cb = canvas.getBoundingClientRect(), W = Math.round(cb.width), H = Math.round(cb.height);
+    canvas.width = W * dpr; canvas.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); oy -= cb.top; topY -= cb.top; // the canvas covers only the lower part of the screen, so less to clear each frame
+    const sprite = (inner, mid) => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, inner); r.addColorStop(.42, mid); r.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c; };
+    const S = [sprite('rgba(255,250,225,1)', 'rgba(255,205,90,.55)'), sprite('rgba(255,175,60,1)', 'rgba(255,110,30,.45)'), sprite('rgba(255,90,30,.95)', 'rgba(190,30,20,.35)'), sprite('rgba(130,120,115,.5)', 'rgba(80,75,72,.12)'), sprite('rgba(255,235,190,1)', 'rgba(255,150,50,.6)')];
+    const reach = Math.max(200, oy - topY + 120), phone = W < 700, spread = Math.min(W * .3, phone ? 210 : 270), base = Math.max(8, reach * (phone ? .038 : .05));
+    const fire = [], smoke = [], sparks = [];
+    let power = 0, target = 1, raf = 0, last = 0, on = false, carry = [0, 0, 0], gust = 1;
+    const born = (kind) => {
+      const t = (Math.random() - .5) * 2, edge = 1 - Math.abs(t) * .5;
+      if (kind === 2) return { x: ox + t * spread, y: oy, vx: (Math.random() - .5) * 60, vy: -reach * (1.1 + Math.random() * .8), s: 1.2 + Math.random() * 1.4, life: 0, max: 900 + Math.random() * 900, sway: Math.random() * 6.3 };
+      if (kind === 1) return { x: ox + t * spread * .9, y: oy - base, vx: (Math.random() - .5) * 24, vy: -reach * (.45 + Math.random() * .3) * edge, s: base * (1.4 + Math.random() * .8), life: 0, max: 1500 + Math.random() * 900, sway: Math.random() * 6.3 };
+      const core = Math.abs(t) < .35; return { x: ox + t * spread, y: oy + base * .6 + (Math.random() - .5) * base * .6, vx: (Math.random() - .5) * 70, vy: -(reach / .52) * (.9 + Math.random() * .5) * edge * gust * (core ? 1.15 : 1), s: base * (phone ? .95 : .75) * (1 + Math.random() * 1.1) * (core ? 1.15 : 1), life: 0, max: 620 + Math.random() * 400, sway: Math.random() * 6.3, f: 120 + Math.random() * 120 };
+    };
+    const spawn = (list, kind, rate, dt, cap) => { carry[kind] += rate * power * dt / 1000; while (carry[kind] >= 1 && list.length < cap) { list.push(born(kind)); carry[kind] -= 1; } };
+    const move = (list, dt, slow, pull) => { for (let i = list.length - 1; i >= 0; i--) { const p = list[i]; p.life += dt; const u = p.life / p.max; if (u >= 1) { list.splice(i, 1); continue; } p.x += (p.vx + Math.sin(p.sway + p.life / (p.f || 150)) * 34 + (ox - p.x) * pull) * dt / 1000; p.y += p.vy * (1 - u * slow) * dt / 1000; p.u = u; } };
+    const frame = (now) => {
+      if (!on) return;
+      const dt = Math.min(48, now - last || 16); last = now;
+      power += (target - power) * Math.min(1, dt / 420);
+      // Gusts: the fire breathes hard and unevenly, so it never looks like a steady fountain.
+      gust = .7 + .45 * Math.abs(Math.sin(now / 95) * Math.sin(now / 260)) + (Math.random() < .03 ? .5 : 0);
+      if (!sparksOnly) { spawn(fire, 0, (phone ? 300 : 600) * gust, dt, 820); spawn(smoke, 1, phone ? 6 : 9, dt, 40); } spawn(sparks, 2, sparksOnly ? 12 : 7, dt, 40);
+      move(fire, dt, .5, 1.6); move(smoke, dt, .3, .4); move(sparks, dt, .2, 0);
+      cx.clearRect(0, 0, W, H);
+      cx.globalCompositeOperation = 'source-over';
+      for (const p of smoke) { const a = .13 * (1 - p.u) * Math.min(1, p.u * 4) * power, r = p.s * (.6 + p.u * 1.8); cx.globalAlpha = a; cx.drawImage(S[3], p.x - r, p.y - r, r * 2, r * 2); }
+      cx.globalCompositeOperation = 'lighter';
+      for (const p of fire) { const a = (p.u < .16 ? p.u / .16 : Math.pow(1 - p.u, .85)) * .6, r = p.s * (1.3 - p.u * .55); cx.globalAlpha = a; cx.drawImage(S[p.u < .2 ? 0 : p.u < .62 ? 1 : 2], p.x - r, p.y - r, r * 2, r * 2); }
+      for (const p of sparks) { const a = 1 - p.u, r = p.s * 2.2; cx.globalAlpha = a; cx.drawImage(S[4], p.x - r, p.y - r, r * 2, r * 2); }
+      cx.globalAlpha = 1;
+      raf = requestAnimationFrame(frame);
+    };
+    return {
+      start() { on = true; last = performance.now(); raf = requestAnimationFrame(frame); },
+      settle(v) { target = v; },
+      // A roar: one burst of fast particles, used the moment the logo starts to rise.
+      burst(n) { for (let i = 0; i < n; i++) { const p = born(0); p.vy *= 1.25; fire.push(p); } },
+      stop() { on = false; cancelAnimationFrame(raf); cx.clearRect(0, 0, W, H); }
+    };
+  }
+
   const intro = $('#intro');
-  const light = () => body.classList.add('lit');
+  const light = () => { body.classList.add('lit'); wakeMankal(); if (page === 'home') setTimeout(emberToCall, 3450); };
   if (intro && !session.get('mankal-intro')) {
     body.classList.add('intro-wait');
-    const hold = reduce ? 880 : 1780, gone = reduce ? 500 : 800;
+    const impact = $('.intro-impact', intro), bed = $('#intro-bed', intro), hole = $('.hole', bed), hot = $('.hot', bed), logo = $('.intro-logo', intro), film = $('#intro-flame', intro);
+    const timers = []; let done = false, sparks = null; const phoneW = innerWidth < 700;
+    // The fire film starts loading at once (the intro is the first thing on screen); on a slow line the ignition still happens with the coals, glow and sparks, and the film fades in the moment it can play.
+    if (film) film.src = film.canPlayType('video/mp4; codecs="avc1.4d401e"') ? (phoneW ? 'assets/video/flame-sm.mp4' : 'assets/video/flame.mp4') : 'assets/video/flame.webm';
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+    const finish = () => {
+      if (done) return; done = true; timers.forEach(clearTimeout); if (sparks) sparks.stop();
+      intro.classList.add('lift'); body.classList.remove('intro-wait'); light(); session.set('mankal-intro', '1');
+      setTimeout(() => { intro.classList.add('gone'); if (film) { film.pause(); film.removeAttribute('src'); film.load(); } }, reduce ? 400 : 1000);
+    };
+    $('[data-skip-intro]', intro).addEventListener('click', finish);
+    // The coals catch from the ember: the hot bed shows through a round window that grows from that point while the coals shrink by the same amount, so they stay still and only the window moves.
+    const reveal = (ms) => {
+      const t0 = performance.now();
+      const run = (now) => { const u = Math.min(1, (now - t0) / ms), s = .02 + .98 * (1 - Math.pow(1 - u, 3)); hole.style.transform = `translate(-50%, -50%) scale(${s})`; hot.style.transform = `scale(${1 / s})`; if (u < 1 && !done) requestAnimationFrame(run); };
+      requestAnimationFrame(run);
+    };
     const go = () => {
-      intro.classList.add('burn');
-      setTimeout(() => { intro.classList.add('lift'); body.classList.remove('intro-wait'); light(); session.set('mankal-intro', '1'); }, hold);
-      setTimeout(() => intro.classList.add('gone'), hold + gone);
+      const b = bed.getBoundingClientRect(), px = b.left + b.width / 2, py = b.top + b.height * .55;
+      impact.style.setProperty('--ty', py + 'px');
+      if (reduce) { hole.style.transform = 'translate(-50%, -50%) scale(1)'; hot.style.transform = 'none'; intro.classList.add('wake', 'show-logo'); at(900, finish); return; }
+      // Anticipation (0 to 0.5 s): one ember wakes in the dark and breathes. Ignition (0.5 s): the coals catch from it, the glow rises, the fire film and the sparks start.
+      at(120, () => intro.classList.add('ember'));
+      at(520, () => { intro.classList.add('wake', 'burn'); reveal(1100); if (film) { const p = film.play(); if (p && p.catch) p.catch(() => {}); } sparks = flame($('#intro-sparks', intro), px, py, py - innerHeight * .5, true); sparks.start(); });
+      // Brand (1.0 s): the halo rises from the fire and the emblem comes into its light. Hold (1.9 s): one slow pulse of warmth. Opening (2.7 s): the scene brightens into the page.
+      at(1000, () => { intro.classList.add('show-logo'); if (sparks) sparks.burst(phoneW ? 10 : 16); });
+      at(1900, () => intro.classList.add('hold'));
+      at(2700, finish);
     };
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(go, 80)));
   } else {
